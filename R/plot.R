@@ -1,24 +1,42 @@
 library(readr)
 library(ggplot2)
+library(stringr)
+library(DECIPHER)
+library(RColorBrewer)
 
 plot_construct <- function(ref) {
-  p <- data.frame(text=unlist(strsplit(ref$seq,"")),
-                  pos=1:nchar(ref$seq),
-                  x=(1:nchar(ref$seq)-1) %% 50,
-                  y=-((1:nchar(ref$seq)-1) %/% 50)) %>%
-    mutate(region=case_when(pos<ref$barcode_start ~ "adapter",
-                  pos>=ref$spacer_start&pos<ref$spacer_end ~ "spacer",
-                  pos>=ref$spacer_end&pos<ref$spacer_end+3 ~ "PAM",
-                  pos>=ref$barcode_end ~ "adapter"))
-    
+  ref <- readLines(ref)
+  refseq <- ref[1]
+  regions <- strsplit(ref[2:length(ref)],split=" ")
+  regions <- do.call(rbind,regions) %>% 
+    as.data.frame() %>%
+    setNames(c("region","start","end")) %>%
+    mutate(start=strtoi(start),
+           end=strtoi(end)) %>%
+    mutate(region=as.character(region))
+  
+  colors <- brewer.pal(nrow(regions)+1,"Set2")
+  p <- data.frame(text=unlist(strsplit(refseq,"")),
+                  pos=1:nchar(refseq),
+                  x=(1:nchar(refseq)-1) %% 50,
+                  y=-((1:nchar(refseq)-1) %/% 50))
+  p$region="adapter"
+  for (i in 1:nrow(regions)) {
+    p$region[(regions[i,"start"]+1):regions[i,"end"]] <- regions[i,"region"]
+  }
+  
   ggplot(p) + 
     geom_text(aes(x=x,y=y,label=text,color=region)) +
-    coord_fixed(ratio=nchar(ref$seq) %/% 50) +
+    scale_color_manual(values=colors,breaks=c(regions$region,"adapter")) +
+    coord_fixed(ratio=nchar(refseq) %/% 50) +
     theme_void()
 }
 
-lorenz_curve <- function(aligned_barcode) {
-  p <- aligned_barcode %>%
+lorenz_curve <- function(aligned_reads) {
+  p <- aligned_reads %>%
+    group_by(target_seq) %>%
+    summarise(count=n()) %>%
+    ungroup %>%
     arrange(desc(count)) %>%
     mutate(x=1:n(),cs=cumsum(count)/sum(count))
   
@@ -37,7 +55,7 @@ lorenz_curve <- function(aligned_barcode) {
 
 num_mutation_histogram <- function(mutation_df) {
   p <- mutation_df %>%
-    group_by(barcode) %>%
+    group_by(target_seq) %>%
     summarise(num_mutation=n()) %>%
     ungroup %>%
     mutate(num_mutation=case_when(num_mutation>=10 ~ "10+",
