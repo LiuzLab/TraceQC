@@ -4,17 +4,21 @@ library(stringr)
 library(DECIPHER)
 library(RColorBrewer)
 
+#' @param ref
+#'
+#' @importFrom RColorBrewer brewer.pal
+#' @export
 plot_construct <- function(ref) {
   ref <- readLines(ref)
   refseq <- ref[1]
   regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>% 
+  regions <- do.call(rbind,regions) %>%
     as.data.frame() %>%
     setNames(c("region","start","end")) %>%
     mutate(start=strtoi(start),
            end=strtoi(end)) %>%
     mutate(region=as.character(region))
-  
+
   colors <- brewer.pal(nrow(regions)+1,"Set2")
   p <- data.frame(text=unlist(strsplit(refseq,"")),
                   pos=1:nchar(refseq),
@@ -24,14 +28,18 @@ plot_construct <- function(ref) {
   for (i in 1:nrow(regions)) {
     p$region[(regions[i,"start"]+1):regions[i,"end"]] <- regions[i,"region"]
   }
-  
-  ggplot(p) + 
+
+  ggplot(p) +
     geom_text(aes(x=x,y=y,label=text,color=region)) +
     scale_color_manual(values=colors,breaks=c(regions$region,"adapter")) +
     coord_fixed(ratio=nchar(refseq) %/% 50) +
     theme_void()
 }
 
+
+#' @param aligned_reads
+#'
+#' @export
 lorenz_curve <- function(aligned_reads) {
   p <- aligned_reads %>%
     group_by(target_seq) %>%
@@ -39,9 +47,9 @@ lorenz_curve <- function(aligned_reads) {
     ungroup %>%
     arrange(desc(count)) %>%
     mutate(x=1:n(),cs=cumsum(count)/sum(count))
-  
+
   scale <- log(p$count[1])
-  p <- ggplot(p) + 
+  p <- ggplot(p) +
     geom_line(aes(x=x,y=y),data=data.frame(x=c(0,nrow(p)),y=c(0,1)),linetype="dotted") +
     geom_line(aes(x=x,y=log(count)/scale),color="blue") +
     geom_line(aes(x=x,y=cs),color="red") +
@@ -53,6 +61,10 @@ lorenz_curve <- function(aligned_reads) {
   return(p)
 }
 
+
+#' @param mutation_df
+#'
+#' @export
 num_mutation_histogram <- function(mutation_df) {
   p <- mutation_df %>%
     group_by(target_seq) %>%
@@ -61,23 +73,27 @@ num_mutation_histogram <- function(mutation_df) {
     mutate(num_mutation=case_when(num_mutation>=10 ~ "10+",
                   TRUE ~ as.character(num_mutation))) %>%
     mutate(num_mutation=factor(num_mutation,levels= c(as.character(1:9),"10+")))
-  
+
   p <- ggplot(p) +
     geom_bar(aes(x=num_mutation)) +
     labs(x="number of mutations per barcode") +
     theme_classic()
-  
+
   return(p)
 }
 
+
+#' @param mutation_df
+#'
+#' @export
 mutation_type <- function(mutation_df) {
   p <- mutation_df %>%
     group_by(type,start,length) %>%
     summarise(num_mutation=n()) %>%
     ungroup %>%
     mutate(type=as.factor(type))
-  
-  p <- ggplot(p) + 
+
+  p <- ggplot(p) +
     geom_bar(aes(x=type,fill=type)) +
     labs(x="",y="diversity") +
     theme_classic()

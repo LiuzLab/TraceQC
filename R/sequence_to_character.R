@@ -1,3 +1,15 @@
+#' Title
+#'
+#' @param insertions
+#' @param deletions
+#' @param mutations
+#' @param target_seq
+#' @param read_count
+#'
+#' @return
+#' @export
+#'
+#' @examples
 find_position <- function(insertions,deletions,mutations,target_seq,read_count) {
   insertions <- insertions %>%
     as.data.frame() %>%
@@ -21,15 +33,24 @@ find_position <- function(insertions,deletions,mutations,target_seq,read_count) 
     select(target_seq,type,start,length,mutate_to,count))
 }
 
+#' Title
+#'
+#' @param aligned_reads
+#' @param out_file
+#'
+#' @return
+#' @export
+#'
+#' @examples
 seq_to_character <- function(aligned_reads,out_file) {
   col_names <- names(aligned_reads)
   col_names <- col_names[!(col_names %in% c("name","seq","ref","score"))]
-  
+
   aligned_reads <- aligned_reads %>%
     group_by_at(col_names) %>%
     summarise(count=n()) %>%
     ungroup
-  
+
   all_insertions <- str_locate_all(aligned_reads$target_ref,"-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq,"-+")
   all_mutations <- mapply(function(x,y) {which(x!=y & x!="-" & y!="-" & y!="N")},
@@ -40,10 +61,10 @@ seq_to_character <- function(aligned_reads,out_file) {
   mutation_df <- mapply(find_position,all_insertions,all_deletions,all_mutations,
                         target_seqs,read_counts,SIMPLIFY=FALSE) %>%
     bind_rows()
-  
+
   unmutated <- filter(aligned_reads,target_seq==target_ref)
   mutation_df <- rbind(data.frame(target_seq=unmutated$target_seq,type="unmutated",start=0,
                                   length=0,mutate_to="-",count=unmutated$count),mutation_df)
-  
+
   write_tsv(mutation_df,out_file)
   return(mutation_df)}

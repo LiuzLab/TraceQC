@@ -4,10 +4,20 @@ library(circlize)
 library(ComplexHeatmap)
 library(ggplot2)
 
+#' Title
+#'
+#' @param df
+#' @param title
+#' @param ref
+#'
+#' @return
+#' @export
+#'
+#' @examples
 circular_chordgram <- function(df,title,ref) {
   ref <- readLines(ref)
   regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>% 
+  regions <- do.call(rbind,regions) %>%
     as.data.frame() %>%
     setNames(c("region","start","end")) %>%
     mutate(start=strtoi(start),
@@ -16,7 +26,7 @@ circular_chordgram <- function(df,title,ref) {
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
   refseq <- substr(ref[1],start=target_start+1,stop=target_end)
-  
+
   col_fun = colorRamp2(c(floor(min(df$log10_count)),
                          ceiling(max(df$log10_count))),c("yellow", "red"))
   df$color <- col_fun(df$log10_count)
@@ -28,14 +38,14 @@ circular_chordgram <- function(df,title,ref) {
   circos.link(1,df$start[i],1,df$end[i],h.ratio=0.9,
               lwd=0.2*df$log10_count[i],col=df$color[i])
   }
-  
+
   colors <- brewer.pal(nrow(regions)+1,"Set2")
   col = rep("black",nchar(ref[1]))
   for (i in 1:nrow(regions)) {
     col[(regions[i,"start"]+1):regions[i,"end"]] <- colors[i]
   }
   col <- col[target_start+1:target_end]
-  
+
   circos.text(1:l,0.5,strsplit(refseq,split="") %>% unlist(),col=col,cex=1)
   title(title)
   circos.clear()
@@ -45,11 +55,20 @@ circular_chordgram <- function(df,title,ref) {
 }
 
 
+#' Title
+#'
+#' @param df
+#' @param ref
+#'
+#' @return
+#' @export
+#'
+#' @examples
 circular_histogram <- function(df,ref) {
   ref <- "./test_data/ref.txt"
   ref <- readLines(ref)
   regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>% 
+  regions <- do.call(rbind,regions) %>%
     as.data.frame() %>%
     setNames(c("region","start","end")) %>%
     mutate(start=strtoi(start),
@@ -72,7 +91,7 @@ circular_histogram <- function(df,ref) {
   }
   col <- col[target_start+1:target_end]
   circos.text(1:l,0.5,strsplit(refseq,split="") %>% unlist(),col=col,cex=1)
-  
+
   colors <- c("red","grey","blue","green")
   names(colors) <- c("A","C","G","T")
   for (i in 1:nrow(df)) {

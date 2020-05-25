@@ -15,7 +15,8 @@ Imports:
   RColorBrewer,
   ComplexHeatmap,
   ggplot2,
-  readr
+  readr,
+  DECIPHER
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
