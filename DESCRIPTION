@@ -1,6 +1,6 @@
-Package: CTK
+Package: traceQC
 Type: Package
-Title: What the Package Does (Title Case) Please put a fancy title!
+Title: Quality Control of CRISPR Lineage Tracing Seqence Data.
 Version: 0.1.0
 Date: 2020-04-23
 Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "cre", "cph"), email = "jingyuan.hu@bcm.edu"),
@@ -8,8 +8,7 @@ Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "cre", "c
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"),
   person(given = "Zhandong", family = "Liu", role = c("aut", "ctb"), email = "zhandong.liu@bcm.edu"))
 Maintainer: Jingyuan Hu <jingyuan.hu@bcm.edu> 
-Description: The quaility control package for CRISPR data. Jasper please put a nice description! Thank you
-    Use four spaces when indenting paragraphs within the Description.
+Description: Provides a generalized quantify control functions and data processing pipeline across several CRISPR-based lineage tracing platforms that can be directly used in data analysis.
 Imports:
   circlize,
   tidyr,
