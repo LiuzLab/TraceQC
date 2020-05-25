@@ -65,7 +65,6 @@ circular_chordgram <- function(df,title,ref) {
 #'
 #' @examples
 circular_histogram <- function(df,ref) {
-  ref <- "./test_data/ref.txt"
   ref <- readLines(ref)
   regions <- strsplit(ref[2:length(ref)],split=" ")
   regions <- do.call(rbind,regions) %>%

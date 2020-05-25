@@ -19,9 +19,10 @@ library(stringr)
 library(ggplot2)
 library(stringr)
 library(fastqcr)
-source("./src/plot.R")
-source("./src/circular.R")
-source("./src/sequence_to_character.R")
+library(RColorBrewer)
+library(traceQC)
+library(circlize) # Added due to a function dependency, has to be out 
+library(ComplexHeatmap) # Added due to a function dependency, has to be out 
 ``` 
 
 ## Data
@@ -29,19 +30,19 @@ Randomly sampled 5000 reads from Church's data.
 
 ## Plot construct
 ```{r construct}
-ref <- read_delim("./test_data/ref.txt",delim=" ")
+ref <- system.file("extdata", "test_data","ref.txt",package = "traceQC")
 plot_construct(ref)
 ```
 
 ## FastQC {.tabset}
 ```{r QC}
-qc_dir <- "./fastqc_out"
-fastqc("./test_data",qc.dir=qc_dir)
+qc_dir <- tempdir()
+fastqc(system.file("extdata", "test_data",package = "traceQC"),qc.dir=qc_dir)
 ```
 
 ### Per base quality
 ``` {r}
-qc <- qc_read("./fastqc_out/example_fastqc.zip")
+qc <- qc_read(file.path(qc_dir, "example_fastqc.zip"))
 qc_plot(qc, "Per base sequence quality")
 ```
 
@@ -58,17 +59,24 @@ qc_plot(qc, "Per base N content")
 ## Alignment
 ``` {r align}
 start_time <- Sys.time()
-system("python ./src/alignment.py --input ./test_data/example.fastq --reference ./test_data/ref.txt --output ./aligned.txt")
+
+align_script <- system.file("py", "alignment.py", package="traceQC")
+input_file <- system.file("extdata", "test_data", "example.fastq", package="traceQC")
+ref_file <- system.file("extdata", "test_data", "ref.txt", package="traceQC")
+output_file <- tempfile()
+# system("python ./src/alignment.py --input ./test_data/example.fastq --reference ./test_data/ref.txt --output ./aligned.txt")
+cmd <- paste("python", align_script, "--input", input_file, "--reference", ref_file, "--output", output_file)
+system(cmd)
 end_time <- Sys.time()
 paste("Aligning 5000 reads in", round(end_time - start_time,2))
 ```
 
 ## Output file
 ``` {r out}
-aligned_barcode <- read_tsv("./aligned.txt") %>%
+aligned_barcode <- read_tsv(output_file) %>%
   mutate(id=1:n())
 print(nrow(aligned_barcode))
-kable(head(aligned_barcode) %>% select(id,count,score,spacer)) %>%
+kable(head(aligned_barcode) %>% select(id,score,spacer_seq)) %>% # count is not available
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
@@ -88,11 +96,12 @@ lorenz_curve(aligned_barcode)
 ## Sequence to character
 ``` {r s2c}
 start_time <- Sys.time()
-mutation_df <- seq_to_character(aligned_barcode) %>%
+out_path <- tempfile()
+mutation_df <- seq_to_character(aligned_barcode, out_path) %>%
   mutate(id=1:n())
-kable(head(mutation_df) %>% select(id,count,type,start,length))
 end_time <- Sys.time()
 paste("It takes",end_time-start_time)
+kable(head(mutation_df) %>% select(id,count,type,start,length))
 ```
 
 ## Number of mutations per barcode
@@ -133,7 +142,6 @@ insertions <- mutation_df %>%
 
 circular_chordgram(df=insertions,title="insertions",ref)
 ```
-
 ### Mutations
 ``` {r}
 mutations <- filter(mutation_df,type=="mutation") %>%
@@ -142,4 +150,5 @@ mutations <- filter(mutation_df,type=="mutation") %>%
   ungroup
 
 circular_histogram(mutations,ref)
+
 ```
