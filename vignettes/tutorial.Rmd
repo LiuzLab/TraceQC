@@ -19,8 +19,8 @@ library(stringr)
 library(ggplot2)
 library(stringr)
 library(fastqcr)
+library(TraceQC)
 library(RColorBrewer)
-library(traceQC)
 library(circlize) # Added due to a function dependency, has to be out 
 library(ComplexHeatmap) # Added due to a function dependency, has to be out 
 ``` 
@@ -30,14 +30,15 @@ Randomly sampled 5000 reads from Church's data.
 
 ## Plot construct
 ```{r construct}
-ref <- system.file("extdata", "test_data","ref.txt",package = "traceQC")
+ref <- system.file("extdata", "test_data","ref.txt",package = "TraceQC")
 plot_construct(ref)
 ```
 
 ## FastQC {.tabset}
 ```{r QC}
 qc_dir <- tempdir()
-fastqc(system.file("extdata", "test_data",package = "traceQC"),qc.dir=qc_dir)
+testdata_path <- system.file("extdata", "test_data",package = "TraceQC")
+fastqc(testdata_path,qc.dir=qc_dir)
 ```
 
 ### Per base quality
@@ -58,50 +59,56 @@ qc_plot(qc, "Per base N content")
 
 ## Alignment
 ``` {r align}
-start_time <- Sys.time()
+library(reticulate)
+# use_miniconda()
+# py_install("pandas")
+# py_install("numpy")
+# py_install("biopython")
 
-align_script <- system.file("py", "alignment.py", package="traceQC")
-input_file <- system.file("extdata", "test_data", "example.fastq", package="traceQC")
-ref_file <- system.file("extdata", "test_data", "ref.txt", package="traceQC")
+start_time <- Sys.time()
+align_script <- system.file("py", "alignment.py", package="TraceQC")
+input_file <- system.file("extdata", "test_data", "example.fastq", package="TraceQC")
+ref_file <- system.file("extdata", "test_data", "ref.txt", package="TraceQC")
 output_file <- tempfile()
-# system("python ./src/alignment.py --input ./test_data/example.fastq --reference ./test_data/ref.txt --output ./aligned.txt")
-cmd <- paste("python", align_script, "--input", input_file, "--reference", ref_file, "--output", output_file)
-system(cmd)
+
+source_python(align_script)
+
+args <- list("input"=input_file,
+          "reference"=ref,
+          "output"=output_file,
+          "match"=2,"mismatch"=-2,"gapopen"=-6,
+          "gapextension"=-0.1)
+alignment(r_to_py(args))
+
 end_time <- Sys.time()
 paste("Aligning 5000 reads in", round(end_time - start_time,2))
 ```
 
 ## Output file
 ``` {r out}
-aligned_barcode <- read_tsv(output_file) %>%
-  mutate(id=1:n())
-print(nrow(aligned_barcode))
-kable(head(aligned_barcode) %>% select(id,score,spacer_seq)) %>% # count is not available
+aligned_reads <- read_tsv(output_file)
+kable(head(aligned_reads) %>% select(name,score)) %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 ## Score distribution
 ``` {r score}
-ggplot(aligned_barcode) + 
-  geom_histogram(aes(x=score,y=..density..),binwidth=5) +
-  ylab("percentage") +
-  theme_classic()
+plot_score_distribution(aligned_reads)
 ```
 
 ## Lorenz curve
 ``` {r lorenz}
-lorenz_curve(aligned_barcode)
+lorenz_curve(aligned_reads)
 ```
 
 ## Sequence to character
 ``` {r s2c}
 start_time <- Sys.time()
-out_path <- tempfile()
-mutation_df <- seq_to_character(aligned_barcode, out_path) %>%
-  mutate(id=1:n())
+output_seq_to_char <- tempfile()
+mutation_df <- seq_to_character(aligned_reads, output_seq_to_char)
+kable(head(mutation_df) %>% select(count,type,start,length))
 end_time <- Sys.time()
 paste("It takes",end_time-start_time)
-kable(head(mutation_df) %>% select(id,count,type,start,length))
 ```
 
 ## Number of mutations per barcode
@@ -111,44 +118,108 @@ num_mutation_histogram(mutation_df)
 
 ## Mutation types
 ``` {r,message=FALSE}
-mutation_type(mutation_df) 
+mutation_type(mutation_df)
 ```
 
 ## Mutation Hotspot {.tabset}
 
 ### Deletions
 ``` {r}
-deletions <- mutation_df %>%
-  filter(type=="deletion") %>%
-  group_by(start,length) %>%
-  summarise(count=sum(count)) %>%
-  mutate(end=start+length) %>%
-  ungroup %>%
-  mutate(id=1:n()) %>%
-  mutate(log10_count=log10(count))
-circular_chordgram(df=deletions,title="deletions",ref)
+plot_deletion_hotspot(mutation_df,ref)
 ```
 
 ### Insertions
 ``` {r}
-insertions <- mutation_df %>%
-  filter(type=="insertion") %>%
-  group_by(start,length) %>%
-  summarise(count=sum(count)) %>%
-  mutate(end=start+length) %>%
-  ungroup %>%
-  mutate(id=1:n()) %>%
-  mutate(log10_count=log10(count))
-
-circular_chordgram(df=insertions,title="insertions",ref)
+plot_insertion_hotspot(mutation_df,ref)
 ```
+
 ### Mutations
 ``` {r}
-mutations <- filter(mutation_df,type=="mutation") %>%
-  group_by(start,length,mutate_to) %>%
-  summarise(count=sum(count)) %>%
-  ungroup
-
-circular_histogram(mutations,ref)
-
+plot_point_mutation_hotspot(mutation_df,ref)
 ```
+
+## Mutation rate
+``` {r}
+args <- list("input"=system.file("extdata", "test_data", "example_0d.fastq", package = "TraceQC"),
+          "reference"=system.file("extdata", "test_data", "ref.txt", package = "TraceQC"),
+          "output"= tempfile(),
+          "match"=2,"mismatch"=-2,"gapopen"=-6,
+          "gapextension"=-0.1)
+alignment(args)
+aligned_reads <- read_tsv(args$output)
+
+output_0d <- tempfile()
+seq_to_character(aligned_reads,output_0d)
+
+args <- list("input"=system.file("extdata", "test_data", "example_2d.fastq", package = "TraceQC"),
+          "reference"=system.file("extdata", "test_data", "ref.txt", package = "TraceQC"),
+          "output"= tempfile(),
+          "match"=2,"mismatch"=-2,"gapopen"=-6,
+          "gapextension"=-0.1)
+alignment(args)
+aligned_reads <- read_tsv(args$output)
+
+output_2d <- tempfile()
+seq_to_character(aligned_reads,output_2d)
+
+
+args <- list("input"=system.file("extdata", "test_data", "example_14d.fastq", package = "TraceQC"),
+          "reference"=system.file("extdata", "test_data", "ref.txt", package = "TraceQC"),
+          "output"= tempfile(),
+          "match"=2,"mismatch"=-2,"gapopen"=-6,
+          "gapextension"=-0.1)
+alignment(args)
+aligned_reads <- read_tsv(args$output)
+
+output_14d <- tempfile()
+seq_to_character(aligned_reads,output_14d)
+
+
+data <- list("day0"=read_tsv(output_0d),
+             "day2"=read_tsv(output_2d),
+             "day14"=read_tsv(output_14d))
+
+merged_df <- data.frame()
+for (d in names(data)) {
+  tmp <- select(data[[d]],-target_seq) %>%
+      group_by(type,start,length,mutate_to) %>%
+      summarise(count=sum(count)) %>%
+      ungroup
+  names(tmp)[names(tmp)=="count"] <- d
+  
+  if (nrow(merged_df)==0) {
+    merged_df <- tmp
+  }
+  else {
+  merged_df <- full_join(merged_df,tmp,by=c("type","start","length","mutate_to"))}
+}
+
+unmutated_count <- filter(merged_df,type=="unmutated") %>%
+  select(names(data)) %>%
+  gather(day,unmutated_count) %>%
+  mutate(day=factor(day,levels=c("day0","day2","day14")))
+
+unmutated_count$tot_count <- 5000
+
+ggplot(unmutated_count,aes(x=day,y=1-unmutated_count/tot_count)) +
+  geom_point(size=5) +
+  geom_path() +
+  ylab("mutated percentage") +
+  theme_classic()
+```
+
+
+## Build phylo tree
+``` {r}
+library(phangorn)
+library(ggtree)
+
+data <- build_character_table(mutation_df)
+print(data[1:10,1:10])
+data <- phyDat(data=data,type="USER",levels=c(0,1))
+dm <- dist.hamming(data)
+treeUPGMA <- upgma(dm)
+treePars <- optim.parsimony(treeUPGMA, data)
+ggtree(treePars) + geom_tiplab()
+```
+

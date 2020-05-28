@@ -1,4 +1,4 @@
-Package: traceQC
+Package: TraceQC
 Type: Package
 Title: Quality Control of CRISPR Lineage Tracing Seqence Data.
 Version: 0.1.0
