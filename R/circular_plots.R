@@ -5,7 +5,7 @@ library(ComplexHeatmap)
 library(ggplot2)
 
 
-#' Display a circos function with links for a given data frame.
+#' Display a circos plot with links for a given data frame.
 #'
 #' @param df a data frame that contains data to be visualized on the plot
 #' @param title The main title of the plot
@@ -18,7 +18,6 @@ library(ggplot2)
 #'
 #' @return It doesn't generate any specific output.
 #'
-#' @examples
 circular_chordgram <- function(df,title,traceQC_input) {
   regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
@@ -48,19 +47,22 @@ circular_chordgram <- function(df,title,traceQC_input) {
   circos.text(1:l,0.5,strsplit(refseq,split="") %>% unlist(),col=col,cex=1)
   title(title)
   circos.clear()
-  lgd <- Legend(at=seq(floor(min(df$log10_count)),ceiling(max(df$log10_count)),length.out=5),
+  lgd <- Legend(at=seq(floor(min(df$log10_count)),ceiling(max(df$log10_count)),
+                       length.out=5),
                 col_fun=col_fun,title="log 10 count")
   draw(lgd,x = unit(0.15, "npc"), y = unit(0.15, "npc"))
 }
 
-#' Display a circos function with a histgoram for a given data frame.
+#' Display a circos plot with a histgoram for a given data frame.
 #'
-#' @param traceQC_input
-#' @param df
+#' @param traceQC_input A traceQC object
+#' @param title The main title of the plot.
+#' @param df a data frame that contains data to be visualized on the plot.
 #'
 #' @importFrom magrittr %>%
 #' @import circlize
 #' @import dplyr
+#' @importFrom ComplexHeatmap Legend draw
 #'
 #' @return
 #'
@@ -103,6 +105,13 @@ circular_histogram <- function(df, title, traceQC_input) {
                 border=NA,track.index=1)
   }
   title(title)
+  lgd <- Legend(at = c("A", "C", "G", "T"), type = "points",
+                       legend_gp = gpar(col = c("red","grey","blue","green")),
+                       title_position = "topleft",
+                       title = "Nucleotide")
+
+  draw(lgd, x = unit(0.15, "npc"), y = unit(0.15, "npc"))
+
   circos.clear()
 }
 
