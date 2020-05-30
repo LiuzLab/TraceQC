@@ -48,7 +48,8 @@ circular_chordgram <- function(df,title,traceQC_input) {
   circos.text(1:l,0.5,strsplit(refseq,split="") %>% unlist(),col=col,cex=1)
   title(title)
   circos.clear()
-  lgd <- Legend(at=seq(floor(min(df$log10_count)),ceiling(max(df$log10_count)),length.out=5),
+  lgd <- Legend(at=seq(floor(min(df$log10_count)),ceiling(max(df$log10_count)),
+                       length.out=5),
                 col_fun=col_fun,title="log 10 count")
   draw(lgd,x = unit(0.15, "npc"), y = unit(0.15, "npc"))
 }
@@ -103,6 +104,13 @@ circular_histogram <- function(df, title, traceQC_input) {
                 border=NA,track.index=1)
   }
   title(title)
+  lgd <- Legend(at = c("A", "C", "G", "T"), type = "points",
+                       legend_gp = gpar(col = c("red","grey","blue","green")),
+                       title_position = "topleft",
+                       title = "Nucleotide")
+
+  draw(lgd, x = unit(0.15, "npc"), y = unit(0.15, "npc"))
+
   circos.clear()
 }
 
