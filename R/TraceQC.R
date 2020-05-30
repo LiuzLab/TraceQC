@@ -5,6 +5,7 @@
 #' @param fastqc_file A path of a FASTQC file.
 #' @param alignment_output_file A path to store alignment output file.
 #' This will be `NULL' if the output is temporally stored.
+#' @param ncores The number of cores for the parallel processing.
 #'
 #' @return It will return a list from `create_input_object_with_alignment'
 #' @export
