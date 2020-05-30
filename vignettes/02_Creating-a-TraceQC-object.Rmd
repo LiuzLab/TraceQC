@@ -1,0 +1,50 @@
+---
+title: "Creating a TraceQC object"
+output: html_document
+---
+
+Three different files are required to create a TraceQC object.
+
+```{r}
+library(TraceQC)
+```
+
+* `input_file`: It is a FASTQ file from an experiment of linage tracing experiment using CRISPR.
+
+```{r}
+input_file <- system.file("extdata", "test_data",
+                          "fastq", "example.fastq", package="TraceQC")
+cat(readLines(input_file)[1:4], sep = "\n")
+```
+
+* `ref_file`: It is a text file that contains a construct (for reference) sequence.
+
+
+```{r}
+ref_file <- system.file("extdata", "test_data", "ref",
+                        "ref.txt", package="TraceQC")
+cat(readLines(ref_file), sep = "\n")
+```
+
+* `input_qc_path`: A path to the [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) file which is corresponded to `input_file`. It is possible to execute or bring the FastQC file outside the workspace, but if there has been no FastQC file yet, then it is possible to create it using `fastqcr` package. The package can be installed by using `install_external_packages`. To generate a FastQC file and get the path, the following lines are needed.
+
+```{r}
+qc_dir <- tempdir() # It is possible to set the dir to another location.
+
+# The first argument is a directory, not a path, 
+# so if there are multiple FASTQ files in a directory, it doesn't have to run
+# `fastqc` function multiple times.
+fastqc(system.file("extdata", "test_data",
+                   "fastq", package = "TraceQC"), 
+       qc.dir=qc_dir)
+# This function tell where the FastQC file which is corresponded to `input_file`.
+input_qc_path <- get_qcpath(input_file, qc_dir)
+```
+
+After the required files are ready, running `TraceQC` will generate an object.
+
+```{r}
+obj <- TraceQC(input_file = input_file,
+               ref_file = ref_file,
+               fastqc_file = input_qc_path)
+```
