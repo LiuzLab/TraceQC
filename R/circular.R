@@ -4,13 +4,28 @@ library(circlize)
 library(ComplexHeatmap)
 library(ggplot2)
 
+
+#' Display a circos function with links for a given data frame.
+#'
+#' @param df a data frame that contains data to be visualized on the plot
+#' @param title The main title of the plot
+#' @param traceQC_input A TraceQC object
+#'
+#' @import circlize
+#' @importFrom magrittr %>%
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom ComplexHeatmap Legend draw
+#'
+#' @return It doesn't generate any specific output.
+#'
+#' @examples
 circular_chordgram <- function(df,title,traceQC_input) {
   regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
   refseq <- substr(traceQC_input$refseq,start=target_start+1,stop=target_end)
 
-  col_fun = colorRamp2(c(floor(min(df$log10_count)),
+  col_fun <- colorRamp2(c(floor(min(df$log10_count)),
                          ceiling(max(df$log10_count))),c("yellow", "red"))
   df$color <- col_fun(df$log10_count)
   l <- nchar(refseq) + 1
@@ -38,7 +53,19 @@ circular_chordgram <- function(df,title,traceQC_input) {
   draw(lgd,x = unit(0.15, "npc"), y = unit(0.15, "npc"))
 }
 
-circular_histogram <- function(df,traceQC_input) {
+#' Display a circos function with a histgoram for a given data frame.
+#'
+#' @param traceQC_input
+#' @param df
+#'
+#' @importFrom magrittr %>%
+#' @import circlize
+#' @import dplyr
+#'
+#' @return
+#'
+#' @examples
+circular_histogram <- function(df, title, traceQC_input) {
   regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
@@ -75,10 +102,27 @@ circular_histogram <- function(df,traceQC_input) {
                 col=colors[df$mutate_to[i]],
                 border=NA,track.index=1)
   }
-  circos.clear()}
+  title(title)
+  circos.clear()
+}
 
-plot_deletion_hotspot <- function(mutation_df,traceQC_input) {
-  deletions <- mutation_df %>%
+#' Display a circos plot that shows overall deletion pattern across the barcodes.
+#'
+#' @param traceQC_input
+#'
+#' @importFrom magrittr %>%
+#' @import circlize
+#' @import dplyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' plot_deletion_hotspot(example_obj)
+#'
+plot_deletion_hotspot <- function(traceQC_input) {
+  deletions <- traceQC_input$mutation %>%
     filter(type=="deletion") %>%
     group_by(start,length) %>%
     summarise(count=sum(count)) %>%
@@ -87,11 +131,26 @@ plot_deletion_hotspot <- function(mutation_df,traceQC_input) {
     mutate(id=1:n()) %>%
     mutate(log10_count=log10(count))
 
-  circular_chordgram(df=deletions,title="deletions",traceQC_input)
+  circular_chordgram(df=deletions,title="Deletions",traceQC_input)
 }
 
-plot_insertion_hotspot <- function(mutation_df,traceQC_input) {
-  insertions <- mutation_df %>%
+#' Display a circos plot that shows overall insertion pattern across the barcodes.
+#'
+#' @param traceQC_input
+#'
+#' @importFrom magrittr %>%
+#' @import circlize
+#' @import dplyr
+#'
+#' @return It won't return any specific object.
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' plot_insertion_hotspot(example_obj)
+#'
+plot_insertion_hotspot <- function(traceQC_input) {
+  insertions <- traceQC_input$mutation %>%
     filter(type=="insertion") %>%
     group_by(start,length) %>%
     summarise(count=sum(count)) %>%
@@ -100,11 +159,28 @@ plot_insertion_hotspot <- function(mutation_df,traceQC_input) {
     mutate(id=1:n()) %>%
     mutate(log10_count=log10(count))
 
-  circular_chordgram(df=insertions,title="insertions",traceQC_input)
+  circular_chordgram(df=insertions,title="Insertions",traceQC_input)
 }
 
-plot_point_mutation_hotspot <- function(mutation_df,traceQC_input) {
-  mutations <- filter(mutation_df,type=="mutation") %>%
+#' Display a mutation hotspot circos plot.
+#'
+#' The circos plot shows the frequency of mutation events for each nucleotide.
+#'
+#' @param traceQC_input A traceQC object
+#'
+#' @import dplyr
+#' @importFrom magrittr %>%
+#'
+#' @return It won't return any specific object.
+#'
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' plot_point_mutation_hotspot(example_obj)
+#'
+plot_point_mutation_hotspot <- function(traceQC_input) {
+  mutations <- filter(traceQC_input$mutation,type=="mutation") %>%
     group_by(start,length,mutate_to) %>%
     summarise(count=sum(count)) %>%
     ungroup %>%
@@ -113,5 +189,5 @@ plot_point_mutation_hotspot <- function(mutation_df,traceQC_input) {
     mutate(y=cumsum(count)) %>%
     ungroup
 
-  circular_histogram(mutations,traceQC_input)
+  circular_histogram(mutations,"Mutations",traceQC_input)
 }
