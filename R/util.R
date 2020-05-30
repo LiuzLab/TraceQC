@@ -1,32 +1,3 @@
-create_input_object <- function(aligned_reads_file,ref_file) {
-  aligned_reads <- read_tsv(aligned_reads_file)
-
-  ref <- readLines(ref_file)
-  refseq <- ref[1]
-  regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>%
-    as.data.frame() %>%
-    setNames(c("region","start","end")) %>%
-    mutate(start=strtoi(start),
-           end=strtoi(end)) %>%
-    mutate(region=as.character(region))
-  return (list(aligned_reads=aligned_reads,
-               refseq=refseq,
-              regions=regions))
-}
-
-library(reticulate)
-sequence_alignment <- function(input_file,ref_file,output_file="aligned_reads.txt",
-                      match=2,mismatch=-2,gapopen=-6,gapextension=-0.1) {
-  args <- list("input"=input_file,
-               "reference"=ref_file,
-               "output"=output_file,
-               "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-               "gapextension"=gapextension)
-  source_python(system.file("py", "alignment.py", package="TraceQC"))
-  alignment(args)
-}
-
 #' Title
 #'
 #' @param insertions
@@ -126,3 +97,14 @@ build_character_table <- function(df) {
               seq_id=seq_id))}
 
 
+#' Function to locate where the Quality Control file is stored.
+#'
+#' @param input_file A path of FASTQ file.
+#' @param qc_dir The directory path where Quality Control files are.
+#'
+#' @return A path to the corresponded zipped Quality Control file.
+#' @export
+get_qcpath <- function(input_file, qc_dir) {
+  qc_path <- sub(".fastq", "_fastqc.zip", basename(input_file))
+  file.path(qc_dir, qc_path)
+}
