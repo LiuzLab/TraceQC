@@ -20,7 +20,9 @@ library(ggplot2)
 library(stringr)
 library(fastqcr)
 library(RColorBrewer)
-library(traceQC)
+library(parallel)
+library(TraceQC)
+library(reticulate)
 library(circlize) # Added due to a function dependency, has to be out 
 library(ComplexHeatmap) # Added due to a function dependency, has to be out 
 ``` 
@@ -31,7 +33,7 @@ Randomly sampled 5000 reads from Church's data.
 ## FastQC {.tabset}
 ```{r QC}
 qc_dir <- tempdir()
-fastqc(system.file("extdata", "test_data",package = "traceQC"),qc.dir=qc_dir)
+fastqc(system.file("extdata", "test_data",package = "TraceQC"),qc.dir=qc_dir)
 ```
 
 ### Per base quality
@@ -54,9 +56,9 @@ qc_plot(qc, "Per base N content")
 ``` {r align}
 start_time <- Sys.time()
 
-input_file <- system.file("extdata", "test_data", "example.fastq", package="traceQC")
-ref_file <- system.file("extdata", "test_data", "ref.txt", package="traceQC")
-output_file <- "/mnt/hdd/jasper/traceQC/output/aligned_reads.txt"
+input_file <- system.file("extdata", "test_data", "example.fastq", package="TraceQC")
+ref_file <- system.file("extdata", "test_data", "ref.txt", package="TraceQC")
+output_file <- tempfile()
 sequence_alignment(input_file,ref_file,output_file=output_file,
                       match=2,mismatch=-2,gapopen=-6,gapextension=-0.1)
 end_time <- Sys.time()
@@ -65,29 +67,29 @@ paste("Aligning 5000 reads in", round(end_time - start_time,2))
 
 ## Output file
 ``` {r out}
-traceQC_input <- create_input_object(output_file,ref_file)
+TraceQC_input <- create_input_object(output_file,ref_file)
 ```
 
 ## Plot construct
 ```{r construct}
-plot_construct(traceQC_input)
+plot_construct(TraceQC_input)
 ```
 
 ## Score distribution
 ``` {r score}
-plot_score_distribution(traceQC_input)
+plot_score_distribution(TraceQC_input)
 ```
 
 ## Lorenz curve
 ``` {r lorenz}
-lorenz_curve(traceQC_input)
+lorenz_curve(TraceQC_input)
 ```
 
 ## Sequence to character
 ``` {r s2c}
 start_time <- Sys.time()
-out_path <- "/mnt/hdd/jasper/traceQC/output/mutation_events.txt"
-mutation_df <- seq_to_character(traceQC_input, out_path)
+out_path <- tempfile()
+mutation_df <- seq_to_character(TraceQC_input, out_path)
 end_time <- Sys.time()
 paste("It takes",end_time-start_time)
 ```
@@ -106,17 +108,16 @@ mutation_type(mutation_df)
 
 ### Deletions
 ``` {r}
-plot_deletion_hotspot(mutation_df,traceQC_input)
+plot_deletion_hotspot(mutation_df,TraceQC_input)
 ```
 
 ### Insertions
 ``` {r}
-plot_insertion_hotspot(mutation_df,traceQC_input)
+plot_insertion_hotspot(mutation_df,TraceQC_input)
 ```
 ### Mutations
 ``` {r}
-plot_point_mutation_hotspot(mutation_df,traceQC_input)
-
+plot_point_mutation_hotspot(mutation_df,TraceQC_input)
 ```
 
 ## Build phylo tree

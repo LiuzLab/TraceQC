@@ -16,14 +16,14 @@ create_input_object <- function(aligned_reads_file,ref_file) {
 }
 
 library(reticulate)
-sequence_alignment <- function(input_file,ref_file,output_file="./output/aligned_reads.txt",
+sequence_alignment <- function(input_file,ref_file,output_file="aligned_reads.txt",
                       match=2,mismatch=-2,gapopen=-6,gapextension=-0.1) {
   args <- list("input"=input_file,
                "reference"=ref_file,
                "output"=output_file,
                "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
                "gapextension"=gapextension)
-  source_python(system.file("py", "alignment.py", package="traceQC"))
+  source_python(system.file("py", "alignment.py", package="TraceQC"))
   alignment(args)
 }
 
