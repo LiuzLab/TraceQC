@@ -1,0 +1,130 @@
+---
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+
+params:
+  date: !r Sys.Date()
+  set_title: "TraceQC report"
+  debug: TRUE
+  input_file: !r system.file("extdata", "test_data", "FASTQ", "example.fastq", package="TraceQC")
+  ref_file: !r system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
+  fastqc_dir: !r tempfile()
+  output_dir: !r tempdir()
+  ncores: 4
+---
+
+---
+title: `r params$set_title`
+date: `r params$date`
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(TraceQC)
+library(fastqcr)
+```
+
+
+```{r data_loading, include=FALSE, warning=FALSE, include=FALSE}
+if(!params$debug) {
+  fastqc(dirname(params$input_file), qc.dir=params$fastqc_dir)
+  fastqc_file <- get_qcpath(params$input_file, params$fastqc_dir)
+  cur_obj <- TraceQC(
+    input_file = params$input_file,
+    ref_file = params$ref_file,
+    fastqc_file = fastqc_file,
+    ncores = params$ncores
+  )
+} else {
+  data(example_obj)
+  cur_obj <- example_obj
+}
+```
+
+## Construct structure
+
+```{r construct, echo=FALSE, message=FALSE, warning=FALSE, fig.height=2}
+plot_construct(cur_obj)
+```
+
+## Sequence quality control {.tabset}
+
+### Per base quality
+```{r qc_per_base, echo=FALSE, message=FALSE, warning=FALSE}
+qc_plot(cur_obj$qc, "Per base sequence quality")
+```
+
+### Per sequence quality
+```{r qc_per_quality, echo=FALSE, message=FALSE, warning=FALSE}
+qc_plot(cur_obj$qc, "Per sequence quality scores")
+```
+
+### Per base N content
+```{r qc_n_content, echo=FALSE, message=FALSE, warning=FALSE}
+qc_plot(cur_obj$qc, "Per base N content")
+```
+
+### Sequence Duplication Levels
+
+```{r qc_length, echo=FALSE, message=FALSE, warning=FALSE}
+qc_plot(cur_obj$qc, "Sequence Duplication Levels")
+```
+
+
+## Alignment score distribution
+
+```{r align_score, echo=FALSE, message=FALSE, warning=FALSE}
+plot_score_distribution(cur_obj)
+```
+
+## Barcode distribution inequality
+
+```{r inequality, echo=FALSE, message=FALSE, warning=FALSE}
+lorenz_curve(cur_obj)
+```
+
+
+## Number of mutations per barcode
+
+```{r mutation_barplot, echo=FALSE, message=FALSE, warning=FALSE}
+num_mutation_histogram(cur_obj)
+```
+
+## Summary of mutation events
+
+```{r mutation_summary, echo=FALSE, message=FALSE, warning=FALSE}
+mutation_type(cur_obj)
+```
+
+## Mutation hotspot plots {.tabset}
+
+### Deletions
+```{r deletion, echo=FALSE, message=FALSE, warning=FALSE}
+plot_deletion_hotspot(cur_obj)
+```
+
+### Insertions
+```{r insertion, echo=FALSE, message=FALSE, warning=FALSE}
+plot_insertion_hotspot(cur_obj)
+```
+
+### Mutations
+```{r mutation, echo=FALSE, message=FALSE, warning=FALSE}
+plot_point_mutation_hotspot(cur_obj)
+```
+
+## QC report creation time
+
+```{r report_creation_time, echo=FALSE}
+Sys.time()
+```
+
+
+## R Session Information
+
+```{r session_info, echo=FALSE, message=FALSE, warning=FALSE}
+sessionInfo()
+```
+
