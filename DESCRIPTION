@@ -12,6 +12,7 @@ Description: Provides a generalized quantify control functions and data processi
 Imports:
   circlize,
   tidyr,
+  readr,
   RColorBrewer,
   ComplexHeatmap,
   ggplot2,
@@ -19,9 +20,13 @@ Imports:
   DECIPHER,
   fastqcr,
   reticulate,
-  ggtree
+  ggtree,
+  tictoc,
+  magrittr,
+  dplyr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 Suggests: knitr
+RoxygenNote: 7.1.0
