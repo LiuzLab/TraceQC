@@ -24,7 +24,8 @@ Imports:
   tictoc,
   magrittr,
   dplyr,
-  stringr
+  stringr,
+  grid
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

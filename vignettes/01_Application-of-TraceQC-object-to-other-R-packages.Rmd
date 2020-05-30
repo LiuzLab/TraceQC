@@ -1,0 +1,35 @@
+---
+title: "Application of TraceQC object to other R packages."
+output: 
+  html_document
+---
+
+`TraceQC` is a versatile tool. It is not only for performing Quality Control but also for running analysis. This document shows how to load the object to run a phylogenetic reconstruction using `phangorn` and `ggtree` package.
+
+First, we are going to load `TraceQC` package and an example object (`example_obj`).
+
+```{r}
+library(TraceQC)
+data(example_obj)
+```
+
+Next, `build_character_table` in `TraceQC` will convert the object to a list that contains a matrix and sequence information.
+
+```{r}
+tree_input <- build_character_table(example_obj)
+```
+
+
+Finally, we can reconstruct a phylogenetic tree with the following code.
+
+``` {r}
+library(phangorn)
+library(ggtree)
+data <- phyDat(data=tree_input$character_table,type="USER",levels=c(0,1))
+dm <- dist.hamming(data)
+treeUPGMA <- upgma(dm)
+treePars <- optim.parsimony(treeUPGMA, data)
+
+ggtree(treePars) +
+  geom_tiplab()
+````

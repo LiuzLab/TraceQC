@@ -63,6 +63,7 @@ circular_chordgram <- function(df,title,traceQC_input) {
 #' @import circlize
 #' @import dplyr
 #' @importFrom ComplexHeatmap Legend draw
+#' @importFrom grid gpar
 #'
 #' @return
 #'
