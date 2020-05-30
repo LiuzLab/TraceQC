@@ -1,7 +1,5 @@
-
 #' Installation necessary external software for TraceQC
 #'
-#' @return
 #' @export
 #'
 #' @importFrom fastqcr fastqc_install
