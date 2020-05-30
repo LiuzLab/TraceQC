@@ -16,7 +16,10 @@ Imports:
   ComplexHeatmap,
   ggplot2,
   readr,
-  DECIPHER
+  DECIPHER,
+  fastqcr,
+  reticulate,
+  ggtree
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -33,7 +33,7 @@ Randomly sampled 5000 reads from Church's data.
 ## FastQC {.tabset}
 ```{r QC}
 qc_dir <- tempdir()
-fastqc(system.file("extdata", "test_data",package = "TraceQC"),qc.dir=qc_dir)
+fastqc(system.file("extdata", "test_data", "fastq", package = "TraceQC"),qc.dir=qc_dir)
 ```
 
 ### Per base quality
@@ -56,8 +56,8 @@ qc_plot(qc, "Per base N content")
 ``` {r align}
 start_time <- Sys.time()
 
-input_file <- system.file("extdata", "test_data", "example.fastq", package="TraceQC")
-ref_file <- system.file("extdata", "test_data", "ref.txt", package="TraceQC")
+input_file <- system.file("extdata", "test_data", "fastq", "example.fastq", package="TraceQC")
+ref_file <- system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
 output_file <- tempfile()
 sequence_alignment(input_file,ref_file,output_file=output_file,
                       match=2,mismatch=-2,gapopen=-6,gapextension=-0.1)
