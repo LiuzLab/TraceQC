@@ -10,8 +10,8 @@ params:
   debug: TRUE
   input_file: !r system.file("extdata", "test_data", "FASTQ", "example.fastq", package="TraceQC")
   ref_file: !r system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
-  fastqc_dir: !r tempfile()
-  output_dir: !r tempdir()
+  fastqc_dir: !r tempdir()
+  rds_path: !r tempfile(fileext=".rds")
   ncores: 4
 ---
 
@@ -24,10 +24,13 @@ date: `r params$date`
 knitr::opts_chunk$set(echo = TRUE)
 library(TraceQC)
 library(fastqcr)
+library(tictoc)
+library(knitr)
 ```
 
 
 ```{r data_loading, include=FALSE, warning=FALSE, include=FALSE}
+tic("Running time to create the report")
 if(!params$debug) {
   fastqc(dirname(params$input_file), qc.dir=params$fastqc_dir)
   fastqc_file <- get_qcpath(params$input_file, params$fastqc_dir)
@@ -43,11 +46,23 @@ if(!params$debug) {
 }
 ```
 
+## Input files to generate the report
+
+* Input file: `r params$input_file`
+* Construct file: `r params$ref_file`
+
 ## Construct structure
 
 ```{r construct, echo=FALSE, message=FALSE, warning=FALSE, fig.height=2}
 plot_construct(cur_obj)
 ```
+
+## Basic Statistics of the sample file
+
+```{r basic_stat, echo=FALSE, message=FALSE, warning=FALSE}
+kable(qc_plot(cur_obj$qc, "Basic statistics"))
+```
+
 
 ## Sequence quality control {.tabset}
 
@@ -115,16 +130,28 @@ plot_insertion_hotspot(cur_obj)
 plot_point_mutation_hotspot(cur_obj)
 ```
 
-## QC report creation time
+## Extra information
+
+### QC report creation time
 
 ```{r report_creation_time, echo=FALSE}
 Sys.time()
 ```
 
+### Running time to generate the report
 
-## R Session Information
+```{r running_time, echo=FALSE}
+toc()
+```
+
+
+### R Session Information
 
 ```{r session_info, echo=FALSE, message=FALSE, warning=FALSE}
 sessionInfo()
+```
+
+```{r save_rds, include=FALSE, message=FALSE, warning=FALSE}
+saveRDS(cur_obj, file = params$rds_path)
 ```
 
