@@ -3,6 +3,7 @@
 export(TraceQC)
 export(build_character_table)
 export(create_TraceQC_object)
+export(generate_qc_report)
 export(get_qcpath)
 export(install_external_packages)
 export(lorenz_curve)

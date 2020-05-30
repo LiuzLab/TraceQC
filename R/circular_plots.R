@@ -146,7 +146,7 @@ plot_deletion_hotspot <- function(traceQC_input) {
 
 #' Display a circos plot that shows overall insertion pattern across the barcodes.
 #'
-#' @param traceQC_input
+#' @param traceQC_input A TraceQC object
 #'
 #' @importFrom magrittr %>%
 #' @import circlize

@@ -7,7 +7,7 @@
 plot_insertion_hotspot(traceQC_input)
 }
 \arguments{
-\item{traceQC_input}{}
+\item{traceQC_input}{A TraceQC object}
 }
 \value{
 It won't return any specific object.

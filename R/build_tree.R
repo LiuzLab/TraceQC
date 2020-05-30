@@ -8,7 +8,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 build_character_table <- function(TraceQC_input) {
   df <- filter(TraceQC_input$mutation,count>5,type!="unmutated")
   seq_id <- group_by(df, target_seq, count) %>%
