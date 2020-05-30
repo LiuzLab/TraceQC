@@ -4,18 +4,11 @@ library(circlize)
 library(ComplexHeatmap)
 library(ggplot2)
 
-circular_chordgram <- function(df,title,ref) {
-  ref <- readLines(ref)
-  regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>%
-    as.data.frame() %>%
-    setNames(c("region","start","end")) %>%
-    mutate(start=strtoi(start),
-           end=strtoi(end)) %>%
-    mutate(region=as.character(region))
+circular_chordgram <- function(df,title,traceQC_input) {
+  regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
-  refseq <- substr(ref[1],start=target_start+1,stop=target_end)
+  refseq <- substr(traceQC_input$refseq,start=target_start+1,stop=target_end)
 
   col_fun = colorRamp2(c(floor(min(df$log10_count)),
                          ceiling(max(df$log10_count))),c("yellow", "red"))
@@ -31,7 +24,7 @@ circular_chordgram <- function(df,title,ref) {
   }
 
   colors <- brewer.pal(nrow(regions)+1,"Set2")
-  col = rep("black",nchar(ref[1]))
+  col = rep("black",nchar(refseq))
   for (i in 1:nrow(regions)) {
     col[(regions[i,"start"]+1):regions[i,"end"]] <- colors[i]
   }
@@ -45,18 +38,11 @@ circular_chordgram <- function(df,title,ref) {
   draw(lgd,x = unit(0.15, "npc"), y = unit(0.15, "npc"))
 }
 
-circular_histogram <- function(df,ref) {
-  ref <- readLines(ref)
-  regions <- strsplit(ref[2:length(ref)],split=" ")
-  regions <- do.call(rbind,regions) %>%
-    as.data.frame() %>%
-    setNames(c("region","start","end")) %>%
-    mutate(start=strtoi(start),
-           end=strtoi(end)) %>%
-    mutate(region=as.character(region))
+circular_histogram <- function(df,traceQC_input) {
+  regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
-  refseq <- substr(ref[1],start=target_start+1,stop=target_end)
+  refseq <- substr(traceQC_input$refseq,start=target_start+1,stop=target_end)
 
   scale <- df %>%
     group_by(start) %>%
@@ -72,7 +58,7 @@ circular_histogram <- function(df,ref) {
   circos.axis(h="bottom",labels.facing="reverse.clockwise",direction="inside",
               major.at=seq(0,l,10),labels=seq(0,l,10))
   colors <- brewer.pal(nrow(regions)+1,"Set2")
-  col = rep("black",nchar(ref[1]))
+  col = rep("black",nchar(refseq))
   for (i in 1:nrow(regions)) {
     col[(regions[i,"start"]+1):regions[i,"end"]] <- colors[i]
   }
@@ -91,7 +77,7 @@ circular_histogram <- function(df,ref) {
   }
   circos.clear()}
 
-plot_deletion_hotspot <- function(mutation_df,ref) {
+plot_deletion_hotspot <- function(mutation_df,traceQC_input) {
   deletions <- mutation_df %>%
     filter(type=="deletion") %>%
     group_by(start,length) %>%
@@ -101,10 +87,10 @@ plot_deletion_hotspot <- function(mutation_df,ref) {
     mutate(id=1:n()) %>%
     mutate(log10_count=log10(count))
 
-  circular_chordgram(df=deletions,title="deletions",ref)
+  circular_chordgram(df=deletions,title="deletions",traceQC_input)
 }
 
-plot_insertion_hotspot <- function(mutation_df,ref) {
+plot_insertion_hotspot <- function(mutation_df,traceQC_input) {
   insertions <- mutation_df %>%
     filter(type=="insertion") %>%
     group_by(start,length) %>%
@@ -114,10 +100,10 @@ plot_insertion_hotspot <- function(mutation_df,ref) {
     mutate(id=1:n()) %>%
     mutate(log10_count=log10(count))
 
-  circular_chordgram(df=insertions,title="insertions",ref)
+  circular_chordgram(df=insertions,title="insertions",traceQC_input)
 }
 
-plot_point_mutation_hotspot <- function(mutation_df,ref) {
+plot_point_mutation_hotspot <- function(mutation_df,traceQC_input) {
   mutations <- filter(mutation_df,type=="mutation") %>%
     group_by(start,length,mutate_to) %>%
     summarise(count=sum(count)) %>%
@@ -127,5 +113,5 @@ plot_point_mutation_hotspot <- function(mutation_df,ref) {
     mutate(y=cumsum(count)) %>%
     ungroup
 
-  circular_histogram(mutations,ref)
+  circular_histogram(mutations,traceQC_input)
 }
