@@ -23,7 +23,8 @@ Imports:
   ggtree,
   tictoc,
   magrittr,
-  dplyr
+  dplyr,
+  stringr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

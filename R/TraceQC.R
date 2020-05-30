@@ -23,16 +23,17 @@
 #'
 #' input_qc_path <- get_qcpath(input_file, qc_dir)
 #'
-#' obj <- create_input_object(input_file = input_file,
-#'                            ref_file = ref_file,
-#'                            fastqc_file = input_qc_path)
+#' obj <- TraceQC(input_file = input_file,
+#'                ref_file = ref_file,
+#'                fastqc_file = input_qc_path)
 #'
 #' obj$refseq
-create_input_object <-
+TraceQC <-
   function(input_file,
            ref_file,
            fastqc_file=NULL,
-           alignment_output_file=NULL) {
+           alignment_output_file=NULL,
+           ncores=4) {
 
   if(is.null(alignment_output_file)) {
     alignment_output_file <- tempfile()
@@ -43,10 +44,11 @@ create_input_object <-
     ref_file = ref_file,
     output_file = alignment_output_file
   )
-  create_input_object_with_alignment(
+  create_TraceQC_object(
     alignment_output_file,
     ref_file,
-    fastqc_file)
+    fastqc_file,
+    ncores)
 }
 
 
@@ -55,10 +57,13 @@ create_input_object <-
 #' @param aligned_reads_file A path to store alignment output file.
 #' @param ref_file A path of a reference sequence file.
 #' @param fastqc_file A path of a FASTQC file.
+#' @param ncores The number of cores for the parallel processing.
 #'
 #' @importFrom magrittr %>%
 #' @import dplyr
+#' @importFrom readr read_tsv
 #' @importFrom fastqcr qc_read
+#'
 #' @return A list with those four elements.
 #' \itemize{
 #'   \item `aligned_reads': an data frame that contains alignment information.
@@ -68,10 +73,11 @@ create_input_object <-
 #' }
 #' @export
 #'
-create_input_object_with_alignment <-
+create_TraceQC_object <-
   function(aligned_reads_file,
            ref_file,
-           fastqc_file) {
+           fastqc_file,
+           ncores) {
 
     aligned_reads <- read_tsv(aligned_reads_file)
 
@@ -90,8 +96,10 @@ create_input_object_with_alignment <-
       qc <- qc_read(fastqc_file)
     }
 
-    return (list(aligned_reads=aligned_reads,
-                 refseq=refseq,
-                 regions=regions,
-                 qc=qc))
+    obj <- list(aligned_reads=aligned_reads,
+                refseq=refseq,
+                regions=regions,
+                qc=qc)
+    obj$mutation <- seq_to_character(obj, )
+    obj
   }
