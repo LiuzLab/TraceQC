@@ -13,7 +13,4 @@ data(example_obj)
 \description{
 An example TraceQC object
 }
-\examples{
-data(example_obj)
-}
-\keyword{example_obj}
+\keyword{datasets}

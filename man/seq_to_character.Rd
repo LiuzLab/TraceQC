@@ -2,19 +2,25 @@
 % Please edit documentation in R/mutation_events.R
 \name{seq_to_character}
 \alias{seq_to_character}
-\title{Title}
+\title{Identifying mutation events.}
 \usage{
 seq_to_character(traceQC_input, ncores = 4)
 }
 \arguments{
-\item{ncores}{}
+\item{traceQC_input}{A TraceQC object.}
+
+\item{ncores}{The number of cores for parallelization.}
 }
 \value{
-
+A data frame that contains the columns:
+\itemize{
+  \item `type': The type of mutation.
+  \item `start': The starting position of mutation event.
+  \item `length': The length of mutation.
+  \item `mutation_to': A string that shows what mutation is occurred.
+  \item `count': The total number of the mutation events from the sample.
+}
 }
 \description{
-Title
-}
-\examples{
-
+Identifying mutation events.
 }

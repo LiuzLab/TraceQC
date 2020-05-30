@@ -101,6 +101,8 @@ create_TraceQC_object <-
                 refseq=refseq,
                 regions=regions,
                 qc=qc)
-    obj$mutation <- seq_to_character(obj, )
+    tic("mutation event identification")
+    obj$mutation <- seq_to_character(obj,ncores)
+    toc()
     obj
   }

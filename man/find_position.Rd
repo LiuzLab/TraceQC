@@ -2,16 +2,24 @@
 % Please edit documentation in R/mutation_events.R
 \name{find_position}
 \alias{find_position}
-\title{Title}
+\title{Creating a data frame of mutation events.}
 \usage{
 find_position(insertions, deletions, mutations, target_seq, read_count)
 }
 \arguments{
-\item{read_count}{}
+\item{insertions}{A list that contains insertion events.}
+
+\item{deletions}{A list that contains deletion events.}
+
+\item{mutations}{A list that contains mutation (substitution) events.}
+
+\item{target_seq}{A list that contains the alignment for each event.}
+
+\item{read_count}{A vector that contains counts for each event.}
 }
 \value{
-
+A data frame that contains the event information.
 }
 \description{
-Title
+Creating a data frame of mutation events.
 }

@@ -1,19 +1,17 @@
-#' Title
+#' Creating a data frame of mutation events.
 #'
-#' @param insertions
-#' @param deletions
-#' @param mutations
-#' @param target_seq
-#' @param read_count
+#' @param insertions A list that contains insertion events.
+#' @param deletions A list that contains deletion events.
+#' @param mutations A list that contains mutation (substitution) events.
+#' @param target_seq A list that contains the alignment for each event.
+#' @param read_count A vector that contains counts for each event.
 #'
 #' @import dplyr
 #' @importFrom tidyr replace_na
 #' @importFrom magrittr %>%
 #'
-#' @return
-#' @export
+#' @return A data frame that contains the event information.
 #'
-#' @examples
 find_position <-
   function(insertions,
            deletions,
@@ -58,20 +56,25 @@ find_position <-
     )
   }
 
-#' Title
+#' Identifying mutation events.
 #'
-#' @param traceQC_input
-#' @param ncores
+#' @param traceQC_input A TraceQC object.
+#' @param ncores The number of cores for parallelization.
 #'
 #' @importFrom parallel mcmapply
 #' @importFrom stringr str_locate_all
 #' @importFrom magrittr %>%
 #' @import dplyr
 #'
-#' @return
+#' @return A data frame that contains the columns:
+#' \itemize{
+#'   \item `type': The type of mutation.
+#'   \item `start': The starting position of mutation event.
+#'   \item `length': The length of mutation.
+#'   \item `mutation_to': A string that shows what mutation is occurred.
+#'   \item `count': The total number of the mutation events from the sample.
+#' }
 #' @export
-#'
-#' @examples
 #'
 seq_to_character <- function(traceQC_input,
                              ncores = 4) {
@@ -125,42 +128,3 @@ seq_to_character <- function(traceQC_input,
   return(mutation_df)
 }
 
-
-#' Title
-#'
-#' @param df
-#'
-#' @import dplyr
-#' @importFrom magrittr %>%
-#'
-#' @return
-#' @export
-#'
-#' @examples
-build_character_table <- function(df) {
-  seq_id <- group_by(df, target_seq, count) %>%
-    summarise() %>%
-    ungroup %>%
-    mutate(sequenceID = 1:n())
-
-  unique_events <- df %>%
-    group_by(type, start, length, mutate_to) %>%
-    summarise() %>%
-    ungroup %>%
-    mutate(mutationID = 1:n())
-
-  nr <- nrow(seq_id)
-  nc <- nrow(unique_events)
-
-  df <- left_join(df, seq_id) %>%
-    left_join(unique_events) %>%
-    mutate(coord = nr * (mutationID - 1) + sequenceID)
-
-  character_table <- matrix(data = 0,
-                            nrow = nr,
-                            ncol = nc)
-  character_table[df$coord] <- 1
-  rownames(character_table) <- 1:nr
-  return(list(character_table = character_table,
-              seq_id = seq_id))
-}

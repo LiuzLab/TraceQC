@@ -21,6 +21,8 @@ TraceQC(
 
 \item{alignment_output_file}{A path to store alignment output file.
 This will be `NULL' if the output is temporally stored.}
+
+\item{ncores}{The number of cores for the parallel processing.}
 }
 \value{
 It will return a list from `create_input_object_with_alignment'

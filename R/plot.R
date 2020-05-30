@@ -1,9 +1,20 @@
-library(readr)
-library(ggplot2)
-library(stringr)
-library(DECIPHER)
-library(RColorBrewer)
 
+
+#' Visualization of the construct (reference sequence) information.
+#'
+#' @param traceQC_input an TraceQC object
+#'
+#' @importFrom RColorBrewer brewer.pal
+#' @import ggplot2
+#'
+#' @return it returns A ggplot2 object that shows the construct information.
+#' @export
+#'
+#' @examples
+#' library(TraceQC)
+#' data(example_obj)
+#' plot_construct(example_obj)
+#'
 plot_construct <- function(traceQC_input) {
   colors <- brewer.pal(nrow(traceQC_input$regions) + 1, "Set2")
   p <- data.frame(
@@ -16,7 +27,9 @@ plot_construct <- function(traceQC_input) {
   )
   p$region <- "adapter"
   for (i in 1:nrow(traceQC_input$regions)) {
-    p$region[(traceQC_input$regions[i, "start"] + 1):traceQC_input$regions[i, "end"]] <-
+    from <- traceQC_input$regions[i, "start"] + 1
+    to <- traceQC_input$regions[i, "end"]
+    p$region[from:to] <-
       traceQC_input$regions[i, "region"]
   }
 
@@ -33,6 +46,19 @@ plot_construct <- function(traceQC_input) {
     theme_void()
 }
 
+#' Drawing a score distribution plot
+#'
+#' @param traceQC_input A TraceQC object
+#'
+#' @import ggplot2
+#'
+#' @return A ggplot2 object that shows alignment score distribution.
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' plot_score_distribution(example_obj)
+#'
 plot_score_distribution <- function(traceQC_input) {
   ggplot(traceQC_input$aligned_reads) +
     geom_histogram(aes(x = score, y = ..density..), binwidth = 5) +
@@ -40,6 +66,21 @@ plot_score_distribution <- function(traceQC_input) {
     theme_classic()
 }
 
+#' Drawing Lorenz Curve
+#'
+#' The Lorenz curve shows an inequality of barcode distribution of the sample.
+#'
+#' @param traceQC_input A TraceQC object
+#'
+#' @import ggplot2
+#'
+#' @return A ggplot2 object that shows Lorenz Curve
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' lorenz_curve(example_obj)
+#'
 lorenz_curve <- function(traceQC_input) {
   p <- traceQC_input$aligned_reads %>%
     group_by(target_seq) %>%
@@ -48,7 +89,7 @@ lorenz_curve <- function(traceQC_input) {
     arrange(desc(count)) %>%
     mutate(x = 1:n(), cs = cumsum(count) / sum(count))
 
-  scale <- log(p$count[1])
+  scale <- log10(p$count[1])
   p <- ggplot(p) +
     geom_line(aes(x = x, y = y),
               data = data.frame(x = c(0, nrow(p)), y = c(0, 1)),
@@ -59,15 +100,30 @@ lorenz_curve <- function(traceQC_input) {
     scale_y_continuous(
       breaks = seq(0, 1, 0.2),
       limits = c(0, 1),
-      sec.axis = sec_axis( ~ . * scale, name = "log barcode count")
+      sec.axis = sec_axis( ~ . * scale, name = "Log barcode count (blue)")
     ) +
-    labs(x = "ranked barcode", y = "cumulative sum") +
+    labs(x = "Ranked barcode", y = "Cumulative sum (red)") +
     theme_classic()
   return(p)
 }
 
-num_mutation_histogram <- function(mutation_df) {
-  p <- mutation_df %>%
+#' A barplot to show distribution of the number of mutations per barcode
+#'
+#' @param traceQC_input A TraceQC object
+#'
+#' @import ggplot2
+#' @importFrom magrittr %>%
+#' @import dplyr
+#'
+#' @return A ggplot2 object that shows the barplot
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' num_mutation_histogram(example_obj)
+#'
+num_mutation_histogram <- function(traceQC_input) {
+  p <- traceQC_input$mutation %>%
     group_by(target_seq) %>%
     summarise(num_mutation = n()) %>%
     ungroup %>%
@@ -83,10 +139,25 @@ num_mutation_histogram <- function(mutation_df) {
   return(p)
 }
 
-mutation_type <- function(mutation_df) {
+#' A pie chart that shows a summary of mutation types.
+#'
+#' @param traceQC_input A TraceQC object
+#'
+#' @import ggplot2
+#' @importFrom magrittr %>%
+#' @import dplyr
+#'
+#' @return A ggplot2 object that shows the pie chart
+#' @export
+#'
+#' @examples
+#' data(example_obj)
+#' mutation_type(example_obj)
+#'
+mutation_type <- function(traceQC_input) {
   breaks <- c(1, 2, 4, 8, 16)
 
-  df <- mutation_df %>%
+  df <- traceQC_input$mutation %>%
     filter(type != "unmutated") %>%
     group_by(type, start, length, mutate_to) %>%
     summarise(count = n()) %>%
