@@ -4,13 +4,20 @@ TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
 
 ## Installation
 
-Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following script for the installation.
+Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
+
+```
+BiocManager::install(c("circlize", "ComplexHeatmap", "DECIPHER"))
+install.packages(c("fastqcr", "reticulate", "tictoc"))
+```
 
 ```r
 if(!requireNamespace("devtools", quietly=TRUE)) install.packages("devtools")
 AUTH_TOKEN <- "YOUR TOKEN can be found at https://github.com/settings/tokens"
 devtools::install_github("LiuzLab/TraceQC", auth_token=AUTH_TOKEN)
 ```
+
+After installation is finished, Running `install_external_packages()` is necessary to install external packages.
 
 ## Example
 
