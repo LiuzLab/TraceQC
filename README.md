@@ -1,6 +1,6 @@
 # TraceQC
 
-Trace is a package for quality control of CRISPR Lineage Tracing Seqence Data.
+TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
 
 ## Installation
 
