@@ -38,6 +38,7 @@ A TraceQC object for the input will be returned.
 Create a HTML QC report
 }
 \examples{
+library(TraceQC)
 obj <- generate_qc_report(
   input_file = system.file("extdata", "test_data",
                            "fastq", "example_14d.fastq", package="TraceQC"),

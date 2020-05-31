@@ -4,11 +4,12 @@ Title: Quality Control of CRISPR Lineage Tracing Seqence Data.
 Version: 0.1.0
 Date: 2020-04-23
 Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "cre", "cph"), email = "jingyuan.hu@bcm.edu"),
-  person(given = "Hyun-Hwan", family = "Jeong", role = c( "ctb"), email = "hyun-hwan.jeong@bcm.edu"),
+  person(given = "Hyun-Hwan", family = "Jeong", role = c("aut", "ctb"), email = "hyun-hwan.jeong@bcm.edu"),
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"),
-  person(given = "Zhandong", family = "Liu", role = c("aut", "ctb"), email = "zhandong.liu@bcm.edu"))
+  person(given = "Zhandong", family = "Liu", role = c("ctb"), email = "zhandong.liu@bcm.edu"))
 Maintainer: Jingyuan Hu <jingyuan.hu@bcm.edu> 
 Description: Provides a generalized quantify control functions and data processing pipeline across several CRISPR-based lineage tracing platforms that can be directly used in data analysis.
+Depends: R (>= 3.5.0)
 Imports:
   circlize,
   tidyr,
