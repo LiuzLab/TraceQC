@@ -13,6 +13,9 @@
 #' @param preview It will open a preview to a web-browser if the argument is set to `TRUE'
 #'
 #' @return A TraceQC object for the input will be returned.
+#'
+#' @imporFrom rmarkdown render
+#'
 #' @export
 #'
 #' @examples
@@ -26,7 +29,7 @@
 #'   title = "TraceQC report for example_14d.fastq"
 #'   )
 #' summary(obj)
-
+#'
 generate_qc_report <-
   function(
     input_file = NULL,
@@ -78,7 +81,7 @@ generate_qc_report <-
     knitr_params$rds_path <- rds_path
     knitr_params$set_title <- title
 
-    rmdout_path <- rmarkdown::render(
+    rmdout_path <- render(
       input = template_path,
       output_format = "html_document",
       output_file = output_path,
