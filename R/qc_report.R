@@ -14,7 +14,7 @@
 #'
 #' @return A TraceQC object for the input will be returned.
 #'
-#' @imporFrom rmarkdown render
+#' @importFrom rmarkdown render
 #'
 #' @export
 #'
@@ -82,7 +82,7 @@ generate_qc_report <-
     knitr_params$rds_path <- rds_path
     knitr_params$set_title <- title
 
-    rmdout_path <- rmarkdown::render(
+    rmdout_path <- render(
       input = template_path,
       output_format = "html_document",
       output_file = output_path,

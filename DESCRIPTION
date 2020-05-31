@@ -20,7 +20,6 @@ Imports:
   DECIPHER,
   fastqcr,
   reticulate,
-  ggtree,
   tictoc,
   magrittr,
   dplyr,
@@ -31,5 +30,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-Suggests: knitr
+Suggests: 
+  knitr,
+  ggtree,
+  phangorn
 RoxygenNote: 7.1.0

@@ -67,7 +67,6 @@ circular_chordgram <- function(df,title,traceQC_input) {
 #'
 #' @return It doesn't generate any specific output.
 #'
-#' @examples
 circular_histogram <- function(df, title, traceQC_input) {
   regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
