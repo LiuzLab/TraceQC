@@ -26,7 +26,8 @@
 #'
 #' obj <- TraceQC(input_file = input_file,
 #'                ref_file = ref_file,
-#'                fastqc_file = input_qc_path)
+#'                fastqc_file = input_qc_path,
+#'                ncores=1)
 #'
 #' obj$refseq
 TraceQC <-
@@ -49,7 +50,8 @@ TraceQC <-
     alignment_output_file,
     ref_file,
     fastqc_file,
-    ncores)
+    ncores
+    )
 }
 
 

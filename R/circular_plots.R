@@ -65,7 +65,7 @@ circular_chordgram <- function(df,title,traceQC_input) {
 #' @importFrom ComplexHeatmap Legend draw
 #' @importFrom grid gpar
 #'
-#' @return
+#' @return It doesn't generate any specific output.
 #'
 #' @examples
 circular_histogram <- function(df, title, traceQC_input) {
@@ -118,13 +118,14 @@ circular_histogram <- function(df, title, traceQC_input) {
 
 #' Display a circos plot that shows overall deletion pattern across the barcodes.
 #'
-#' @param traceQC_input
+#' @param traceQC_input A TraceQC object
 #'
 #' @importFrom magrittr %>%
 #' @import circlize
 #' @import dplyr
 #'
-#' @return
+#' @return It doesn't generate any specific output.
+#'
 #' @export
 #'
 #' @examples

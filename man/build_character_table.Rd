@@ -10,7 +10,8 @@ build_character_table(TraceQC_input)
 \item{TraceQC_input}{A TraceQC object}
 }
 \value{
-
+It returns a list that contains a character matrix and a sequence
+information.
 }
 \description{
 Convert A TraceQC object to a matrix

@@ -11,7 +11,7 @@ generate_qc_report(
   output_path = NULL,
   ncores = 4,
   title = "TraceQC report",
-  preview = F
+  preview = FALSE
 )
 }
 \arguments{
@@ -44,8 +44,10 @@ obj <- generate_qc_report(
                            "fastq", "example_14d.fastq", package="TraceQC"),
   ref_file = system.file("extdata", "test_data",
                          "ref", "ref.txt", package="TraceQC"),
-  preview = F,
-  title = "TraceQC report for example_14d.fastq"
+  preview = FALSE,
+  title = "TraceQC report for example_14d.fastq",
+  ncores=1
   )
 summary(obj)
+
 }

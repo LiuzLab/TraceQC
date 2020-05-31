@@ -7,10 +7,10 @@
 plot_deletion_hotspot(traceQC_input)
 }
 \arguments{
-\item{traceQC_input}{}
+\item{traceQC_input}{A TraceQC object}
 }
 \value{
-
+It doesn't generate any specific output.
 }
 \description{
 Display a circos plot that shows overall deletion pattern across the barcodes.

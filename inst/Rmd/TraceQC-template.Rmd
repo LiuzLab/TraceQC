@@ -8,11 +8,11 @@ params:
   date: !r Sys.Date()
   set_title: "TraceQC report"
   debug: TRUE
-  input_file: !r system.file("extdata", "test_data", "FASTQ", "example.fastq", package="TraceQC")
+  input_file: !r system.file("extdata", "test_data", "FASTQ", "example_small.fastq", package="TraceQC")
   ref_file: !r system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
   fastqc_dir: !r tempdir()
   rds_path: !r tempfile(fileext=".rds")
-  ncores: 4
+  ncores: 1
 ---
 
 ---

@@ -101,16 +101,31 @@ seq_to_character <- function(traceQC_input,
   read_counts <- aligned_reads$count
   target_seqs <- aligned_reads$target_seq
 
-  mutation_df <- mcmapply(
-    find_position,
-    all_insertions,
-    all_deletions,
-    all_mutations,
-    target_seqs,
-    read_counts,
-    SIMPLIFY = FALSE,
-    mc.cores = ncores
-  ) %>% bind_rows()
+  mutation_df <- NULL
+
+  if(ncores==1) {
+    mutation_df <- mapply(
+      find_position,
+      all_insertions,
+      all_deletions,
+      all_mutations,
+      target_seqs,
+      read_counts,
+      SIMPLIFY = FALSE
+    ) %>% bind_rows()
+  }
+  else {
+    mutation_df <- mcmapply(
+      find_position,
+      all_insertions,
+      all_deletions,
+      all_mutations,
+      target_seqs,
+      read_counts,
+      SIMPLIFY = FALSE,
+      mc.cores = ncores
+    ) %>% bind_rows()
+  }
 
   unmutated <- filter(aligned_reads, target_seq == target_ref)
   mutation_df <- rbind(

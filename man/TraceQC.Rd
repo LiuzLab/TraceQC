@@ -46,7 +46,8 @@ input_qc_path <- get_qcpath(input_file, qc_dir)
 
 obj <- TraceQC(input_file = input_file,
                ref_file = ref_file,
-               fastqc_file = input_qc_path)
+               fastqc_file = input_qc_path,
+               ncores=1)
 
 obj$refseq
 }

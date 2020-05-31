@@ -1,19 +1,32 @@
 ---
 title: "Creating a TraceQC object"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating a TraceQC object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-Three different files are required to create a TraceQC object.
-
-```{r}
-library(TraceQC)
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
+
+```{r setup}
+library(TraceQC)
+library(fastqcr)
+```
+
+
+Three different files are required to create a TraceQC object.
 
 * `input_file`: It is a FASTQ file from an experiment of linage tracing experiment using CRISPR.
 
 ```{r}
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example.fastq", package="TraceQC")
+                          "fastq", "example_small.fastq", package="TraceQC")
 cat(readLines(input_file)[1:4], sep = "\n")
 ```
 
@@ -46,5 +59,6 @@ After the required files are ready, running `TraceQC` will generate an object.
 ```{r}
 obj <- TraceQC(input_file = input_file,
                ref_file = ref_file,
-               fastqc_file = input_qc_path)
+               fastqc_file = input_qc_path,
+               ncores = 1)
 ```

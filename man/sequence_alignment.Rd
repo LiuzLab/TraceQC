@@ -45,12 +45,12 @@ a global pairwise sequence alignment by biopython package.
 \examples{
 library(TraceQC)
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example.fastq", package="TraceQC")
+                          "fastq", "example_small.fastq", package="TraceQC")
 ref_file <- system.file("extdata", "test_data", "ref",
                         "ref.txt", package="TraceQC")
 output_file <- tempfile()
 sequence_alignment(input_file=input_file,
                    ref_file=ref_file,
                    output_file=output_file,
-                   return_df=T)
+                   return_df=TRUE)
 }

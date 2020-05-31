@@ -25,8 +25,9 @@
 #'                            "fastq", "example_14d.fastq", package="TraceQC"),
 #'   ref_file = system.file("extdata", "test_data",
 #'                          "ref", "ref.txt", package="TraceQC"),
-#'   preview = F,
-#'   title = "TraceQC report for example_14d.fastq"
+#'   preview = FALSE,
+#'   title = "TraceQC report for example_14d.fastq",
+#'   ncores=1
 #'   )
 #' summary(obj)
 #'
@@ -38,7 +39,7 @@ generate_qc_report <-
     output_path = NULL,
     ncores = 4,
     title = "TraceQC report",
-    preview = F
+    preview = FALSE
   ) {
 
     if(is.null(input_file)) {
@@ -72,7 +73,7 @@ generate_qc_report <-
 
     rds_path <- tempfile(fileext = ".rds")
     knitr_params <- list()
-    knitr_params$debug <- F
+    knitr_params$debug <- FALSE
     knitr_params$input_file <- input_file
     knitr_params$ref_file <- ref_file
     knitr_params$fastqc_dir <- fastqc_dir
@@ -81,7 +82,7 @@ generate_qc_report <-
     knitr_params$rds_path <- rds_path
     knitr_params$set_title <- title
 
-    rmdout_path <- render(
+    rmdout_path <- rmarkdown::render(
       input = template_path,
       output_format = "html_document",
       output_file = output_path,

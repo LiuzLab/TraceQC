@@ -14,7 +14,7 @@ circular_histogram(df, title, traceQC_input)
 \item{traceQC_input}{A traceQC object}
 }
 \value{
-
+It doesn't generate any specific output.
 }
 \description{
 Display a circos plot with a histgoram for a given data frame.

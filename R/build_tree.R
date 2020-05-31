@@ -5,7 +5,9 @@
 #' @import dplyr
 #' @importFrom magrittr %>%
 #'
-#' @return
+#' @return It returns a list that contains a character matrix and a sequence
+#' information.
+#'
 #' @export
 #'
 build_character_table <- function(TraceQC_input) {
