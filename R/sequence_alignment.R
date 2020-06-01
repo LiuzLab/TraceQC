@@ -41,9 +41,9 @@ sequence_alignment <- function(input_file,
                                gapopen=-6,
                                gapextension=-0.1,
                                return_df = FALSE) {
-  args <- list("input"=input_file,
-               "reference"=ref_file,
-               "output"=output_file,
+  args <- list("input"=normalizePath(input_file),
+               "reference"=normalizePath(ref_file),
+               "output"=normalizePath(output_file),
                "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
                "gapextension"=gapextension)
   source_python(system.file("py", "alignment.py", package="TraceQC"))

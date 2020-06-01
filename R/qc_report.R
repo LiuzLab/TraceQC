@@ -74,18 +74,18 @@ generate_qc_report <-
     rds_path <- tempfile(fileext = ".rds")
     knitr_params <- list()
     knitr_params$debug <- FALSE
-    knitr_params$input_file <- input_file
-    knitr_params$ref_file <- ref_file
-    knitr_params$fastqc_dir <- fastqc_dir
+    knitr_params$input_file <- normalizePath(input_file)
+    knitr_params$ref_file <- normalizePath(ref_file)
+    knitr_params$fastqc_dir <- normalizePath(fastqc_dir)
     knitr_params$ncores <- ncores
     knitr_params$date <- Sys.Date()
-    knitr_params$rds_path <- rds_path
+    knitr_params$rds_path <- normalizePath(rds_path)
     knitr_params$set_title <- title
 
     rmdout_path <- render(
-      input = template_path,
+      input = normalizePath(template_path),
       output_format = "html_document",
-      output_file = output_path,
+      output_file = normalizePath(output_path),
       params = knitr_params
     )
 
