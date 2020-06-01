@@ -26,6 +26,9 @@ library(TraceQC)
 library(fastqcr)
 library(tictoc)
 library(knitr)
+library(dplyr)
+library(magrittr)
+library(kableExtra)
 ```
 
 
@@ -87,7 +90,6 @@ qc_plot(cur_obj$qc, "Per base N content")
 qc_plot(cur_obj$qc, "Sequence Duplication Levels")
 ```
 
-
 ## Alignment score distribution
 
 ```{r align_score, echo=FALSE, message=FALSE, warning=FALSE}
@@ -100,6 +102,16 @@ plot_score_distribution(cur_obj)
 lorenz_curve(cur_obj)
 ```
 
+## Most frequent mutation patterns
+
+```{r patterns, echo=FALSE, message=FALSE, warning=FALSE}
+cur_obj$mutation %>% arrange(by=-count) %>% head(10) %>% 
+  mutate(target_seq = sapply(.$target_seq, seq_split)) %>% 
+  rename(read="target_seq") %>% 
+  kable(format="html", escape=FALSE) %>% 
+  kable_styling() %>% 
+  column_spec(1, monospace = TRUE)
+```
 
 ## Number of mutations per barcode
 
