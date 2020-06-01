@@ -4,6 +4,12 @@ TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
 
 ## Installation
 
+Dependencies:
+- Miniconda: https://docs.conda.io/en/latest/miniconda.html
+- reticulate which is an R interface to Python: https://rstudio.github.io/reticulate/
+- ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
+- DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
+
 Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
 
 ```
@@ -16,8 +22,8 @@ if(!requireNamespace("devtools", quietly=TRUE)) install.packages("devtools")
 AUTH_TOKEN <- "YOUR TOKEN can be found at https://github.com/settings/tokens"
 devtools::install_github("LiuzLab/TraceQC", auth_token=AUTH_TOKEN)
 ```
+After installation of TraceQC, run `install_external_packages()` to install required external tools/packages needed by TraceQC.
 
-After installation is finished, Running `install_external_packages()` is necessary to install external packages.
 
 ## Example
 
