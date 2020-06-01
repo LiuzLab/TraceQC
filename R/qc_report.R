@@ -19,6 +19,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(TraceQC)
 #' obj <- generate_qc_report(
 #'   input_file = system.file("extdata", "test_data",
@@ -30,7 +31,7 @@
 #'   ncores=1
 #'   )
 #' summary(obj)
-#'
+#' }
 generate_qc_report <-
   function(
     input_file = NULL,

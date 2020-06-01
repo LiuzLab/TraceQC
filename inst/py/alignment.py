@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from Bio import pairwise2, SeqIO
 from multiprocessing import Process, Pool
+import progressbar
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument("--input","-f",help="input sequencing file")
@@ -35,7 +36,12 @@ def alignment(args):
         df = pd.read_csv(args["input"])
         sequences = df["sequence"].tolist()
 
+    bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
+    nreads = 0
     for s in sequences:
+        nreads += 1
+        if nreads % 100000 == 0:
+            bar.update(nreads)
         seq = s
         if args["format"] == ".fastq" or args["format"] == ".fasta":
             seq = s.seq._data
@@ -61,5 +67,3 @@ def alignment(args):
 
     result = pd.DataFrame(data=data)
     result.to_csv(args["output"],sep="\t",index=False)
-
-# alignment(args)

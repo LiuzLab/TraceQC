@@ -24,7 +24,7 @@ get_abspath <- function(f) {
 }
 
 
-#' Split a string by a fixed length and
+#' Split a string by a fixed length and joined with <br> HTML tag.
 #'
 #' @param s The input string
 #' @param len The fixed length
@@ -39,3 +39,23 @@ seq_split <- function(s, len = 50) {
   ed <- st+len
   str_replace_all(paste0(str_sub(s, st, ed-1), collapse = "<br/>"), "-", "_")
 }
+
+
+#' Installation necessary external software for TraceQC
+#'
+#' @export
+#'
+#' @importFrom fastqcr fastqc_install
+#' @importFrom reticulate py_install
+#'
+#' @examples
+#' \dontrun{
+#' library(TraceQC)
+#' install_external_packages()
+#' }
+install_external_packages <- function() {
+  fastqc_install()
+  py_install(packages = c("pandas", "biopython", "progressbar2"))
+  message("All external packages has been installed.")
+}
+

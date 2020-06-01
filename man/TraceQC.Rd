@@ -31,6 +31,7 @@ It will return a list from `create_input_object_with_alignment'
 Creating an input object for TraceQC
 }
 \examples{
+\dontrun{
 library(TraceQC)
 library(fastqcr)
 input_file <- system.file("extdata", "test_data",
@@ -50,4 +51,5 @@ obj <- TraceQC(input_file = input_file,
                ncores=1)
 
 obj$refseq
+}
 }

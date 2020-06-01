@@ -22,6 +22,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(TraceQC)
 #' input_file <- system.file("extdata", "test_data",
 #'                           "fastq", "example_small.fastq", package="TraceQC")
@@ -32,7 +33,7 @@
 #'                    ref_file=ref_file,
 #'                    output_file=output_file,
 #'                    return_df=TRUE)
-
+#' }
 sequence_alignment <- function(input_file,
                                ref_file,
                                output_file="aligned_reads.txt",

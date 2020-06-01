@@ -11,6 +11,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(TraceQC)
 #' library(fastqcr)
 #' input_file <- system.file("extdata", "test_data",
@@ -30,6 +31,7 @@
 #'                ncores=1)
 #'
 #' obj$refseq
+#' }
 TraceQC <-
   function(input_file,
            ref_file,

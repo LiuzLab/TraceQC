@@ -43,6 +43,7 @@ The function is an wrapper of a python function which performs
 a global pairwise sequence alignment by biopython package.
 }
 \examples{
+\dontrun{
 library(TraceQC)
 input_file <- system.file("extdata", "test_data",
                           "fastq", "example_small.fastq", package="TraceQC")
@@ -53,4 +54,5 @@ sequence_alignment(input_file=input_file,
                    ref_file=ref_file,
                    output_file=output_file,
                    return_df=TRUE)
+}
 }

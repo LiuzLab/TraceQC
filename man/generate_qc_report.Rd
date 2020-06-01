@@ -38,6 +38,7 @@ A TraceQC object for the input will be returned.
 Create a HTML QC report
 }
 \examples{
+\dontrun{
 library(TraceQC)
 obj <- generate_qc_report(
   input_file = system.file("extdata", "test_data",
@@ -49,5 +50,5 @@ obj <- generate_qc_report(
   ncores=1
   )
 summary(obj)
-
+}
 }

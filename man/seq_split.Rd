@@ -2,7 +2,7 @@
 % Please edit documentation in R/util.R
 \name{seq_split}
 \alias{seq_split}
-\title{Split a string by a fixed length and}
+\title{Split a string by a fixed length and joined with <br> HTML tag.}
 \usage{
 seq_split(s, len = 50)
 }
@@ -15,5 +15,5 @@ seq_split(s, len = 50)
 A string splited by the `len' then joined by `<br/>'
 }
 \description{
-Split a string by a fixed length and
+Split a string by a fixed length and joined with <br> HTML tag.
 }
