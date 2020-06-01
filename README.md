@@ -1,4 +1,4 @@
-# TraceQC
+# TraceQC <img src="man/figures/hexsticker.png" align="right" height="140"/>
 
 TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
 
