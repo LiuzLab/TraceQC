@@ -13,7 +13,7 @@ circular_chordgram(df, title, traceQC_input, count_cutoff = 1)
 
 \item{traceQC_input}{A TraceQC object}
 
-\item{count_cutoff}{A cutoff to remove link whose count are less than the value.}
+\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
 }
 \value{
 It doesn't generate any specific output.

@@ -4,10 +4,12 @@
 \alias{plot_insertion_hotspot}
 \title{Display a circos plot that shows overall insertion pattern across the barcodes.}
 \usage{
-plot_insertion_hotspot(traceQC_input)
+plot_insertion_hotspot(traceQC_input, count_cutoff = 1)
 }
 \arguments{
 \item{traceQC_input}{A TraceQC object}
+
+\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
 }
 \value{
 It won't return any specific object.
