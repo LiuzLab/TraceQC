@@ -10,6 +10,7 @@ library(ggplot2)
 #' @param df a data frame that contains data to be visualized on the plot
 #' @param title The main title of the plot
 #' @param traceQC_input A TraceQC object
+#' @param count_cutoff A cutoff to remove link whose count are less than the value.
 #'
 #' @import circlize
 #' @importFrom magrittr %>%
@@ -18,23 +19,26 @@ library(ggplot2)
 #'
 #' @return It doesn't generate any specific output.
 #'
-circular_chordgram <- function(df,title,traceQC_input) {
+circular_chordgram <- function(df,title,traceQC_input, count_cutoff = 1) {
   regions <- traceQC_input$regions
   target_start <- filter(regions,region=="target") %>% pull(start)
   target_end <- filter(regions,region=="target") %>% pull(end)
   refseq <- substr(traceQC_input$refseq,start=target_start+1,stop=target_end)
 
-  col_fun <- colorRamp2(c(floor(min(df$log10_count)),
-                         ceiling(max(df$log10_count))),c("yellow", "red"))
+  col_fun <- colorRamp2(c(0,
+                          ceiling(max(df$log10_count))),c("yellow", "red"))
   df$color <- col_fun(df$log10_count)
   l <- nchar(refseq) + 1
   circos.par(start.degree = 90)
   circos.initialize(factors = factor(1), xlim = c(0, ceiling(l*1.05)))
   circos.track(track.height=0.1,ylim=c(0,1))
   circos.axis(major.at=seq(0,l,10),labels=seq(0,l,10))
+  df <- df %>% arrange(by=log10_count) %>% filter(log10_count>=count_cutoff)
+  max_cnt <- ceiling(max(df$log10_count))
   for (i in 1:nrow(df)) {
     circos.link(1,df$start[i],1,df$end[i],h.ratio=0.9,
-                lwd=0.2*df$log10_count[i],col=df$color[i])
+                lwd=df$log10_count[i]/2,
+                col=alpha(df$color[i], df$log10_count[i]/max_cnt))
   }
 
   colors <- brewer.pal(nrow(regions)+1,"Set2")
