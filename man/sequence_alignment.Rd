@@ -12,6 +12,7 @@ sequence_alignment(
   mismatch = -2,
   gapopen = -6,
   gapextension = -0.1,
+  ncores = 4,
   return_df = FALSE
 )
 }
@@ -31,11 +32,13 @@ stored at the path.}
 
 \item{gapextension}{The gap extension score for the alignment.}
 
+\item{ncores}{The number of cores for the parallel processing}
+
 \item{return_df}{A logical argument to report what type of output will
 be created from the function.}
 }
 \value{
-It returns a data frame of the alignment resuilt
+It returns a data frame of the alignment result
 if `return_df' is `T' and `NULL' otherwise.
 }
 \description{

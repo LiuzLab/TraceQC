@@ -55,7 +55,7 @@ seq_split <- function(s, len = 50) {
 #' }
 install_external_packages <- function() {
   fastqc_install()
-  py_install(packages = c("pandas", "biopython", "progressbar2"))
+  py_install(packages = c("pandas", "biopython", "tqdm"))
   message("All external packages has been installed.")
 }
 
