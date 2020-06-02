@@ -4,20 +4,38 @@ import numpy as np
 import pandas as pd
 from Bio import pairwise2, SeqIO
 from multiprocessing import Process, Pool
-import progressbar
+from tqdm import tqdm
+import gzip
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--input","-f",help="input sequencing file")
-# parser.add_argument("--reference","-r",help="reference sequence file")
-# parser.add_argument("--match","-a",help="match score for alignment",default=2)
-# parser.add_argument("--mismatch","-i",help="mismatch score for alignment",default=-2)
-# parser.add_argument("--gapopen","-g",help="gap opening score for alignment",default=-6)
-# parser.add_argument("--gapextension","-e",help="gap extension score for alignment",default=-0.1)
-# parser.add_argument("--output","-o",help="output file",default="./output/aligned.txt")
-# args = parser.parse_args()
+
+def get_score(param):
+    s, ref, regions, args = param
+    seq = s.seq._data
+    align = pairwise2.align.globalms(ref,
+                                seq,
+                                args["match"],
+                                args["mismatch"],
+                                args["gapopen"],
+                                args["gapextension"],
+                                one_alignment_only=True)[0]
+
+    cs = np.cumsum([i!="-" for i in align[0]])
+    
+    data = {}
+    data["name"] = s.name
+    data["seq"] = align[1]
+    data["ref"] = align[0]
+    data["score"] = align[2]
+    
+    for region in regions:
+        start = min(np.argwhere(cs==regions[region][0])[0])
+        end = min(np.argwhere(cs==regions[region][1])[0])
+        data["%s_ref"%region] = align[0][start:end]
+        data["%s_seq"%region] = align[1][start:end]
+        
+    return data
 
 def alignment(args):
-    _,args["format"] = os.path.splitext(args["input"])
     regions = {}
     with open(args["reference"],"r") as f:
         ref = f.readline().strip()
@@ -30,40 +48,27 @@ def alignment(args):
         data["%s_seq"%region] = []
         data["%s_ref"%region] = []
 
-    if args["format"] == ".fastq" or args["format"] == ".fasta":
-        sequences = SeqIO.parse(args["input"],args["format"][1:])
-    elif args["format"] == ".txt":
-        df = pd.read_csv(args["input"])
-        sequences = df["sequence"].tolist()
+    inp_handle = None
+    if args["input"].lower().endswith("gz"):
+        inp_handle = gzip.open(args["input"], "rt")
+    else:
+        inp_handle = open(args["input"], "r")
 
-    bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
     nreads = 0
-    for s in sequences:
-        nreads += 1
-        if nreads % 100000 == 0:
-            bar.update(nreads)
-        seq = s
-        if args["format"] == ".fastq" or args["format"] == ".fasta":
-            seq = s.seq._data
-            data["name"].append(s.name)
-
-        align = pairwise2.align.globalms(ref,seq,args["match"],args["mismatch"],\
-                                     args["gapopen"],args["gapextension"],one_alignment_only=True)[0]
-        data["seq"].append(align[1])
-        data["ref"].append(align[0])
-        data["score"].append(align[2])
-
-        cs = np.cumsum([i!="-" for i in align[0]])
-        for region in regions:
-            start = min(np.argwhere(cs==regions[region][0])[0])
-            end = min(np.argwhere(cs==regions[region][1])[0])
-            data["%s_ref"%region].append(align[0][start:end])
-            data["%s_seq"%region].append(align[1][start:end])
-
-    if args["format"] == ".txt":
-        for c in df.columns:
-            if c != "sequence":
-                data[c] = df[c]
+    
+    if int(args["ncores"]) != 1:
+        with Pool(processes=int(args["ncores"])) as pool:
+            data = [ret for ret in \
+                tqdm(pool.imap_unordered(get_score,((s, ref, regions, args) \
+                for s in SeqIO.parse(inp_handle, "fastq")))) ]
+    else: 
+        data = [ret for ret in \
+            tqdm(get_score((s, ref, regions, args)) \
+            for s in SeqIO.parse(inp_handle, "fastq")) ]
+    
+    
+    if inp_handle != None:
+        inp_handle.close()
 
     result = pd.DataFrame(data=data)
     result.to_csv(args["output"],sep="\t",index=False)

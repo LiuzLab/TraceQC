@@ -13,11 +13,12 @@
 #' @param gapextension The gap extension score for the alignment.
 #' @param return_df A logical argument to report what type of output will
 #' be created from the function.
+#' @param ncores The number of cores for the parallel processing
 #'
 #' @importFrom reticulate source_python
 #' @importFrom readr read_tsv
 #' @importFrom tictoc tic toc
-#' @return It returns a data frame of the alignment resuilt
+#' @return It returns a data frame of the alignment result
 #' if `return_df' is `T' and `NULL' otherwise.
 #' @export
 #'
@@ -41,12 +42,14 @@ sequence_alignment <- function(input_file,
                                mismatch=-2,
                                gapopen=-6,
                                gapextension=-0.1,
+                               ncores = 4,
                                return_df = FALSE) {
   args <- list("input"=get_abspath(input_file),
                "reference"=get_abspath(ref_file),
                "output"=get_abspath(output_file),
                "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-               "gapextension"=gapextension)
+               "gapextension"=gapextension,
+               "ncores"=ncores)
   source_python(system.file("py", "alignment.py", package="TraceQC"))
 
   tic("Alignment")

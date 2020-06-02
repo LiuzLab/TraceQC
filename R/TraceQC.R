@@ -46,7 +46,8 @@ TraceQC <-
   sequence_alignment(
     input_file = input_file,
     ref_file = ref_file,
-    output_file = alignment_output_file
+    output_file = alignment_output_file,
+    ncores = ncores
   )
   create_TraceQC_object(
     alignment_output_file,
@@ -105,6 +106,8 @@ create_TraceQC_object <-
                 refseq=refseq,
                 regions=regions,
                 qc=qc)
+
+    message("Running mutation event identification.")
     tic("mutation event identification")
     obj$mutation <- seq_to_character(obj,ncores)
     toc()
