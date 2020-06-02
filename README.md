@@ -5,7 +5,6 @@ TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
 ## Installation
 
 Dependencies:
-- Miniconda: https://docs.conda.io/en/latest/miniconda.html
 - reticulate which is an R interface to Python: https://rstudio.github.io/reticulate/
 - ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
 - DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
