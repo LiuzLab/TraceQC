@@ -255,3 +255,4 @@ plot_point_mutation_hotspot <- function(traceQC_input) {
     ungroup
   circular_histogram(mutations, "Mutations", traceQC_input)
 }
+
