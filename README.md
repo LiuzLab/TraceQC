@@ -8,23 +8,51 @@ Dependencies:
 - reticulate which is an R interface to Python: https://rstudio.github.io/reticulate/
 - ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
 - DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
-
+- 
 Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
 
 ```
-BiocManager::install(c("circlize", "ComplexHeatmap", "DECIPHER"))
+BiocManager::install(c("ComplexHeatmap", "DECIPHER"))
 install.packages(c("fastqcr", "reticulate", "tictoc"))
 ```
 
 ```r
 if(!requireNamespace("devtools", quietly=TRUE)) install.packages("devtools")
-AUTH_TOKEN <- "YOUR TOKEN can be found at https://github.com/settings/tokens"
-devtools::install_github("LiuzLab/TraceQC", auth_token=AUTH_TOKEN)
+devtools::install_github("LiuzLab/TraceQC")
 ```
 After installation of TraceQC, run `install_external_packages()` to install required external tools/packages needed by TraceQC.
 
 
-## Example
+## Examples
+
+A FASTQ file and a reference file are required to use TraceQC. The reference is a text file which contains information as follows:
+
+```
+ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
+target 23 140
+spacer 87 107
+PAM 107 110
+```
+
+The first line of the reference file represents a construct sequence. The other lines indicates target, spacer, and PAM regions of the construct. In these lines, two numbers next to a region name specifiy the start and end locations of the region. Be aware that locations are 0-based.
+
+`generate_qc_report` is used to create a QC HTML report. The following script shows an example to create.
+
+```r
+library(TraceQC)
+obj <- generate_qc_report(
+ input_file = system.file("extdata", "test_data",
+                          "fastq", "example_14d.fastq", package="TraceQC"),
+ ref_file = system.file("extdata", "test_data",
+                        "ref", "ref.txt", package="TraceQC"),
+ preview = T,
+ title = "TraceQC report for example_14d.fastq",
+ ncores=1
+ )
+summary(obj)
+```
+
+The following example shows how to create an TraceQC object.
 
 ```r
 library(TraceQC)
@@ -40,9 +68,6 @@ fastqc(system.file("extdata", "test_data",
 
 input_qc_path <- get_qcpath(input_file, qc_dir)
 
-example_obj <- TraceQC(input_file = input_file,
-                       ref_file = ref_file,
-                       fastqc_file = input_qc_path)
-
-save(example_obj, file="data/example_obj.rda")
+obj <- TraceQC(input_file = input_file, ref_file = ref_file, fastqc_file = input_qc_path)
 ```
+
