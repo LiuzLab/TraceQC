@@ -31,6 +31,7 @@ circular_chordgram <-
                             ceiling(max(df$log10_count))), c("yellow", "red"))
     df$color <- col_fun(df$log10_count)
     l <- nchar(refseq) + 1
+
     circos.par(start.degree = 90)
     circos.initialize(factors = factor(1), xlim = c(0, ceiling(l * 1.05)))
     circos.track(track.height = 0.1, ylim = c(0, 1))
@@ -62,8 +63,10 @@ circular_chordgram <-
                 strsplit(refseq, split = "") %>% unlist(),
                 col = col,
                 cex = 1)
-    title(title)
+
     circos.clear()
+
+    title(title)
     lgd <-
       Legend(
         at = seq(floor(min(df$log10_count)), ceiling(max(df$log10_count)),
@@ -101,6 +104,7 @@ circular_histogram <- function(df, title, traceQC_input) {
     ungroup
 
   l <- nchar(refseq) + 1
+
   circos.par(start.degree = 90)
   circos.initialize(factors = factor(1), xlim = c(0, ceiling(l * 1.05)))
   circos.track(
@@ -144,6 +148,8 @@ circular_histogram <- function(df, title, traceQC_input) {
     )
   }
 
+  circos.clear()
+
   title(title)
   lgd <- Legend(
     at = c("A", "C", "G", "T"),
@@ -157,7 +163,6 @@ circular_histogram <- function(df, title, traceQC_input) {
 
   draw(lgd, x = unit(0.15, "npc"), y = unit(0.15, "npc"))
 
-  circos.clear()
 }
 
 #' Display a circos plot that shows overall deletion pattern across the barcodes.
