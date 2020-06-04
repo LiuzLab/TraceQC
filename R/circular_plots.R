@@ -64,9 +64,9 @@ circular_chordgram <-
                 col = col,
                 cex = 1)
 
-    circos.clear()
 
     title(title)
+    circos.clear()
     lgd <-
       Legend(
         at = seq(floor(min(df$log10_count)), ceiling(max(df$log10_count)),
@@ -148,9 +148,9 @@ circular_histogram <- function(df, title, traceQC_input) {
     )
   }
 
+  title(title)
   circos.clear()
 
-  title(title)
   lgd <- Legend(
     at = c("A", "C", "G", "T"),
     type = "points",
