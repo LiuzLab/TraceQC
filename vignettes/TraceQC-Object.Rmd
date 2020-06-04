@@ -26,7 +26,7 @@ Three different files are required to create a TraceQC object.
 
 ```{r}
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example_small.fastq", package="TraceQC")
+                          "fastq", "example_small.fastq.gz", package="TraceQC")
 cat(readLines(input_file)[1:4], sep = "\n")
 ```
 

@@ -35,7 +35,7 @@ Creating an input object for TraceQC
 library(TraceQC)
 library(fastqcr)
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example.fastq", package="TraceQC")
+                          "fastq", "example_small.fastq.gz", package="TraceQC")
 ref_file <- system.file("extdata", "test_data", "ref",
                         "ref.txt", package="TraceQC")
 qc_dir <- tempdir()

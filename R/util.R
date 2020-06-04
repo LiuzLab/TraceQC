@@ -7,8 +7,18 @@
 #' @return A path to the corresponded zipped Quality Control file.
 #' @export
 get_qcpath <- function(input_file, qc_dir) {
-  qc_path <- sub(".fastq", "_fastqc.zip", basename(input_file))
-  file.path(qc_dir, qc_path)
+  qc_path <- strsplit(basename(input_file), split = "\\.")[[1]][1]
+  qc_path <-  paste0(qc_path, "_fastqc.zip")
+  path <- file.path(qc_dir, qc_path)
+  if(!file.exists(path)) {
+    stop(
+    paste("A FastQC file for the input file was not found.",
+          "Please be aware that TraceQC is not guranteed to run for FASTQ files that contain period before the file extension.",
+          "For example, Running a sample with sample.02.fastq.gz may occur some errors.",
+          sep = "\n")
+    )
+  }
+  path
 }
 
 #' Get absolute path of a file.

@@ -23,13 +23,13 @@ Create a list of TraceQC objects from a list
 \dontrun{
 samples <- list(
   "day00" = system.file("extdata", "test_data", "fastq",
-                        "example_0d.fastq", package="TraceQC"),
+                        "example_0d.fastq.gz", package="TraceQC"),
 
   "day02" = system.file("extdata", "test_data", "fastq",
-                        "example_2d.fastq", package="TraceQC"),
+                        "example_2d.fastq.gz", package="TraceQC"),
 
   "day14" = system.file("extdata", "test_data", "fastq",
-                        "example_14d.fastq", package="TraceQC")
+                        "example_14d.fastq.gz", package="TraceQC")
 )
 
 ref <- system.file("extdata", "test_data", "ref",

@@ -42,11 +42,11 @@ Create a HTML QC report
 library(TraceQC)
 obj <- generate_qc_report(
   input_file = system.file("extdata", "test_data",
-                           "fastq", "example_14d.fastq", package="TraceQC"),
+                           "fastq", "example_14d.fastq.gz", package="TraceQC"),
   ref_file = system.file("extdata", "test_data",
                          "ref", "ref.txt", package="TraceQC"),
   preview = FALSE,
-  title = "TraceQC report for example_14d.fastq",
+  title = "TraceQC report for example_14d.fastq.gz",
   ncores=1
   )
 summary(obj)

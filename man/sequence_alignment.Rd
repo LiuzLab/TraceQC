@@ -49,7 +49,7 @@ a global pairwise sequence alignment by biopython package.
 \dontrun{
 library(TraceQC)
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example_small.fastq", package="TraceQC")
+                          "fastq", "example_small.fastq.gz", package="TraceQC")
 ref_file <- system.file("extdata", "test_data", "ref",
                         "ref.txt", package="TraceQC")
 output_file <- tempfile()

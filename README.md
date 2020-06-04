@@ -42,7 +42,7 @@ The first line of the reference file represents a construct sequence. The other 
 library(TraceQC)
 obj <- generate_qc_report(
  input_file = system.file("extdata", "test_data",
-                          "fastq", "example_14d.fastq", package="TraceQC"),
+                          "fastq", "example_14d.fastq.gz", package="TraceQC"),
  ref_file = system.file("extdata", "test_data",
                         "ref", "ref.txt", package="TraceQC"),
  preview = T,
@@ -58,7 +58,7 @@ The following example shows how to create an TraceQC object.
 library(TraceQC)
 library(fastqcr)
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example.fastq", package="TraceQC")
+                          "fastq", "example.fastq.gz", package="TraceQC")
 ref_file <- system.file("extdata", "test_data", "ref",
                         "ref.txt", package="TraceQC")
 qc_dir <- tempdir()

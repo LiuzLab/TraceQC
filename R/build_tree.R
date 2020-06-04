@@ -11,14 +11,14 @@
 #' @export
 #'
 build_character_table <- function(TraceQC_input) {
-  df <- filter(TraceQC_input$mutation,count>5,type!="unmutated")
-  seq_id <- group_by(df, target_seq, count) %>%
+  df <- TraceQC_input$mutation %>% filter(.data$count>5,.data$type!="unmutated")
+  seq_id <- df %>% group_by(.data$target_seq, .data$count) %>%
     summarise() %>%
     ungroup %>%
     mutate(sequenceID = 1:n())
 
   unique_events <- df %>%
-    group_by(type, start, length, mutate_to) %>%
+    group_by(.data$type, .data$start, .data$length, .data$mutate_to) %>%
     summarise() %>%
     ungroup %>%
     mutate(mutationID = 1:n())
@@ -28,7 +28,7 @@ build_character_table <- function(TraceQC_input) {
 
   df <- left_join(df, seq_id) %>%
     left_join(unique_events) %>%
-    mutate(coord = nr * (mutationID - 1) + sequenceID)
+    mutate(coord = nr * (.data$mutationID - 1) + .data$sequenceID)
 
   character_table <- matrix(data = 0,
                             nrow = nr,
