@@ -26,7 +26,7 @@ data(example_obj)
 
 The example object is generated using a FASTQ file that contains randomly sampled 5,000 reads from Church's data. # We need to have a citation!
 
-A TraceQC object has five different elements, as it is seen in the following output.
+A TraceQC object has five different elements, as seen in the following output:
 
 ```{r}
 summary(example_obj)
