@@ -1,6 +1,6 @@
 # TraceQC <img src="man/figures/hexsticker.png" align="right" height="140"/>
 
-TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
+TraceQC is a R package for quality control (QC) of CRISPR Lineage Tracing Seqence Data. With a simple programming, users can create a HTML QC report page and plots for the QC. Here is an example QC report page: [Click here](https://htmlpreview.github.io/?https://github.com/LiuzLab/TraceQC-Supplementary/blob/master/docs/index.html)!
 
 ## Installation
 
