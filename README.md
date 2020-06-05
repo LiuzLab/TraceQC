@@ -30,11 +30,17 @@ A FASTQ file and a reference file are required to use TraceQC. The reference is 
 ```
 ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
 target 23 140
+```
+
+The first line of the reference file represents a construct sequence. The second line indicates target region of the construct. In the lines, two numbers next to a region name specify the start and end locations of the region. Be aware that locations are 0-based. If it needs to add additional regions like spacer region or PAM region, users can add more lines that contains the additional regions. The format of the regions is the same as the target region. Here is an example of the refenence file with additional regions:
+
+```
+ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
+target 23 140
 spacer 87 107
 PAM 107 110
 ```
 
-The first line of the reference file represents a construct sequence. The other lines indicates target, spacer, and PAM regions of the construct. The target region is required, and the other regions are optional. In these lines, two numbers next to a region name specify the start and end locations of the region. Be aware that locations are 0-based.
 
 `generate_qc_report` is used to create a QC HTML report. The following script shows an example to create.
 
