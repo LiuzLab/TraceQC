@@ -32,7 +32,7 @@ ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACAC
 target 23 140
 ```
 
-The first line of the reference file represents a construct sequence. The second line indicates target region of the construct. In the lines, two numbers next to a region name specify the start and end locations of the region. Be aware that locations are 0-based. If it needs to add additional regions like spacer region or PAM region, users can add more lines that contains the additional regions. The format of the regions is the same as the target region. Here is an example of the refenence file with additional regions:
+The first line of the reference file represents a construct sequence. The second line indicates target region of the construct. In the lines, two numbers next to a region name specify the start and end locations of the region. Locations should be 0-based, i.e. the first location is indicated as 0. If users want to add additional regions like spacer region or PAM region, users can add more lines that contains the additional regions. The format of the regions is the same as the target region. Here is an example of the refenence file with additional regions:
 
 ```
 ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
