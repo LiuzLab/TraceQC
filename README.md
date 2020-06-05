@@ -8,7 +8,7 @@ Dependencies:
 - reticulate which is an R interface to Python: https://rstudio.github.io/reticulate/
 - ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
 - DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
-- 
+
 Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
 
 ```
