@@ -69,6 +69,7 @@ TraceQC <-
 #' @import dplyr
 #' @importFrom readr read_tsv
 #' @importFrom fastqcr qc_read
+#' @importFrom stats setNames
 #'
 #' @return A list with those four elements.
 #' \itemize{
@@ -93,9 +94,9 @@ create_TraceQC_object <-
     regions <- do.call(rbind,regions) %>%
       as.data.frame() %>%
       setNames(c("region","start","end")) %>%
-      mutate(start=strtoi(start),
-             end=strtoi(end)) %>%
-      mutate(region=as.character(region))
+      mutate(start=strtoi(.data$start),
+             end=strtoi(.data$end)) %>%
+      mutate(region=as.character(.data$region))
 
     qc <- NULL
     if(!is.null(fastqc_file)) {

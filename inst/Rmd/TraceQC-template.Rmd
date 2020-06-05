@@ -99,7 +99,7 @@ plot_score_distribution(cur_obj)
 ## Barcode distribution inequality
 
 ```{r inequality, echo=FALSE, message=FALSE, warning=FALSE}
-lorenz_curve(cur_obj)
+plot_lorenz_curve(cur_obj)
 ```
 
 ## Most frequent mutation patterns

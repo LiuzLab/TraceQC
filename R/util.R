@@ -68,4 +68,3 @@ install_external_packages <- function() {
   py_install(packages = c("pandas", "biopython", "tqdm"))
   message("All external packages has been installed.")
 }
-

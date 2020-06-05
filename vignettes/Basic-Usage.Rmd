@@ -1,5 +1,5 @@
 ---
-title: "Basic-Usage"
+title: "Basic Usage"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Basic Usage}
@@ -62,7 +62,7 @@ plot_score_distribution(example_obj)
 
 ## Lorenz curve
 ``` {r lorenz}
-lorenz_curve(example_obj)
+plot_lorenz_curve(example_obj)
 ```
 
 

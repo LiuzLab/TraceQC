@@ -91,7 +91,7 @@ generate_qc_report <-
     )
 
     if(preview)
-      browseURL(paste0("file://", rmdout_path))
+      utils::browseURL(paste0("file://", rmdout_path))
 
     readRDS(rds_path)
   }

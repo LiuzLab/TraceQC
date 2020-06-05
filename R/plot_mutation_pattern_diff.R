@@ -57,17 +57,18 @@ plot_mutation_pattern_lineplot <- function(obj_list) {
   for (l in names(obj_list)) {
     df <- bind_rows(
       df,
-      obj_list[[l]]$mutation %>% group_by(type) %>%
-        summarize(freq = sum(count)) %>% ungroup() %>%
-        mutate(freq = freq / sum(freq) * 100) %>%
+      obj_list[[l]]$mutation %>%
+        group_by(.data$type) %>%
+        summarize(freq = sum(.data$count)) %>% ungroup() %>%
+        mutate(freq = .data$freq / sum(.data$freq) * 100) %>%
         mutate(label = l)
     )
   }
   df$label <- factor(df$label, levels=names(obj_list))
 
-  ggplot(df, aes(x = label, y = freq)) +
-    geom_point(aes(color = type, shape = type), size = 4) +
-    geom_path(aes(group = type, color = type)) +
+  ggplot(df, aes_string(x = "label", y = "freq")) +
+    geom_point(aes_string(color = "type", shape = "type"), size = 4) +
+    geom_path(aes_string(group = "type", color = "type")) +
     ylab("Percentage (%)") +
     theme_classic()
 }
@@ -93,16 +94,16 @@ plot_mutation_pattern_violinplot <- function(obj_list) {
     df <- bind_rows(
       df,
       obj_list[[l]]$mutation %>%
-        filter(type != "unmutated") %>%
-        mutate(freq = count / sum(count) * 100) %>%
+        filter(.data$type != "unmutated") %>%
+        mutate(freq = .data$count / sum(.data$count) * 100) %>%
         mutate(label = l)
     )
   }
 
   df$label <- factor(df$label, levels=names(obj_list))
   df %>%
-    ggplot(aes(x = label, y = freq)) +
-    geom_violin(aes(fill = label)) +
+    ggplot(aes_string(x = "label", y = "freq")) +
+    geom_violin(aes_string(fill = "label")) +
     ylab("Percentage (%)") +
     facet_grid(type ~ ., scales = "free_y") +
     theme_classic()

@@ -22,8 +22,8 @@ library(ggplot2)
 circular_chordgram <-
   function(df, title, traceQC_input, count_cutoff = 1) {
     regions <- traceQC_input$regions
-    target_start <- filter(regions, region == "target") %>% pull(start)
-    target_end <- filter(regions, region == "target") %>% pull(end)
+    target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
+    target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
     refseq <-
       substr(traceQC_input$refseq, start = target_start + 1, stop = target_end)
 
@@ -37,7 +37,7 @@ circular_chordgram <-
     circos.track(track.height = 0.1, ylim = c(0, 1))
     circos.axis(major.at = seq(0, l, 10), labels = seq(0, l, 10))
     df <-
-      df %>% arrange(by = log10_count) %>% filter(log10_count >= count_cutoff)
+      df %>% arrange(by = .data$log10_count) %>% filter(.data$log10_count >= count_cutoff)
     max_cnt <- ceiling(max(df$log10_count))
     for (i in 1:nrow(df)) {
       circos.link(
@@ -93,15 +93,15 @@ circular_chordgram <-
 #'
 circular_histogram <- function(df, title, traceQC_input) {
   regions <- traceQC_input$regions
-  target_start <- filter(regions, region == "target") %>% pull(start)
-  target_end <- filter(regions, region == "target") %>% pull(end)
+  target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
+  target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
   refseq <-
     substr(traceQC_input$refseq, start = target_start + 1, stop = target_end)
 
   scale <- df %>%
-    group_by(start) %>%
-    summarise(count = sum(count)) %>%
-    ungroup
+    group_by(.data$start) %>%
+    summarise(count = sum(.data$count)) %>%
+    ungroup()
 
   l <- nchar(refseq) + 1
 
@@ -184,13 +184,13 @@ circular_histogram <- function(df, title, traceQC_input) {
 #'
 plot_deletion_hotspot <- function(traceQC_input, count_cutoff = 1) {
   deletions <- traceQC_input$mutation %>%
-    filter(type == "deletion") %>%
-    group_by(start, length) %>%
-    summarise(count = sum(count)) %>%
-    mutate(end = start + length) %>%
+    filter(.data$type == "deletion") %>%
+    group_by(.data$start, .data$length) %>%
+    summarise(count = sum(.data$count)) %>%
+    mutate(end = .data$start + .data$length) %>%
     ungroup %>%
     mutate(id = 1:n()) %>%
-    mutate(log10_count = log10(count))
+    mutate(log10_count = log10(.data$count))
 
   circular_chordgram(df = deletions,
                      title = "Deletions",
@@ -217,13 +217,13 @@ plot_deletion_hotspot <- function(traceQC_input, count_cutoff = 1) {
 plot_insertion_hotspot <-
   function(traceQC_input, count_cutoff = 1) {
     insertions <- traceQC_input$mutation %>%
-      filter(type == "insertion") %>%
-      group_by(start, length) %>%
-      summarise(count = sum(count)) %>%
-      mutate(end = start + length) %>%
+      filter(.data$type == "insertion") %>%
+      group_by(.data$start, .data$length) %>%
+      summarise(count = sum(.data$count)) %>%
+      mutate(end = .data$start + .data$length) %>%
       ungroup %>%
       mutate(id = 1:n()) %>%
-      mutate(log10_count = log10(count))
+      mutate(log10_count = log10(.data$count))
 
     circular_chordgram(df = insertions,
                        title = "Insertions",
@@ -249,14 +249,14 @@ plot_insertion_hotspot <-
 #' plot_point_mutation_hotspot(example_obj)
 #'
 plot_point_mutation_hotspot <- function(traceQC_input) {
-  mutations <- filter(traceQC_input$mutation, type == "mutation") %>%
-    group_by(start, length, mutate_to) %>%
-    summarise(count = sum(count)) %>%
+  mutations <- traceQC_input$mutation %>% filter(.data$type == "mutation") %>%
+    group_by(.data$start, .data$length, .data$mutate_to) %>%
+    summarise(count = sum(.data$count)) %>%
     ungroup %>%
-    group_by(start) %>%
-    mutate(mutate_to = as.character(mutate_to)) %>%
-    arrange(count) %>%
-    mutate(y = cumsum(count)) %>%
+    group_by(.data$start) %>%
+    mutate(mutate_to = as.character(.data$mutate_to)) %>%
+    arrange(.data$count) %>%
+    mutate(y = cumsum(.data$count)) %>%
     ungroup
   circular_histogram(mutations, "Mutations", traceQC_input)
 }

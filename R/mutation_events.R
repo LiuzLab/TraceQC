@@ -22,14 +22,14 @@ find_position <-
       as.data.frame() %>%
       mutate(target_seq = target_seq) %>%
       mutate(
-        length = end - start + 1,
+        length = .data$end - .data$start + 1,
         type = "insertion",
-        mutate_to = substr(target_seq, start = start, stop = end)
+        mutate_to = substr(target_seq, start = .data$start, stop = .data$end)
       )
     deletions <- deletions %>%
       as.data.frame() %>%
       mutate(target_seq = target_seq) %>%
-      mutate(length = end - start + 1,
+      mutate(length = .data$end - .data$start + 1,
              type = "deletion",
              mutate_to = "-")
     mutations <- data.frame(start = mutations, end = mutations) %>%
@@ -37,22 +37,20 @@ find_position <-
       mutate(
         length = 1,
         type = "mutation",
-        mutate_to = substr(target_seq, start = start, stop = end)
+        mutate_to = substr(target_seq, start = .data$start, stop = .data$end)
       )
     return (
       rbind(insertions, deletions, mutations) %>%
-        arrange(start) %>%
-        mutate(tmp = lag(as.integer(
-          type == "insertion"
-        ) * length)) %>%
-        mutate(tmp = replace_na(tmp, 0)) %>%
-        mutate(align = cumsum(tmp)) %>%
+        arrange(.data$start) %>%
+        mutate(tmp = lag(as.integer(.data$type == "insertion") * length)) %>%
+        mutate(tmp = replace_na(.data$tmp, 0)) %>%
+        mutate(align = cumsum(.data$tmp)) %>%
         mutate(
-          start = start - align,
-          target_seq = target_seq,
+          start = .data$start - .data$align,
+          target_seq = .data$target_seq,
           count = read_count
         ) %>%
-        select(target_seq, type, start, length, mutate_to, count)
+        select(.data$target_seq, .data$type, .data$start, .data$length, .data$mutate_to, .data$count)
     )
   }
 
@@ -127,7 +125,8 @@ seq_to_character <- function(traceQC_input,
     ) %>% bind_rows()
   }
 
-  unmutated <- filter(aligned_reads, target_seq == target_ref)
+  unmutated <- aligned_reads %>%
+    filter(.data$target_seq == .data$target_ref)
   mutation_df <- rbind(
     data.frame(
       target_seq = unmutated$target_seq,

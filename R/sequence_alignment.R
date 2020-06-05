@@ -51,11 +51,14 @@ sequence_alignment <- function(input_file,
                "gapextension"=gapextension,
                "ncores"=ncores)
   source_python(system.file("py", "alignment.py", package="TraceQC"))
+  print(ls(parent.frame()))
+  module <- reticulate::import_from_path("alignment", system.file("py", package = "TraceQC"))
+
 
   tic("Alignment")
   message(paste0("Running an alignment between ", ref_file,
                  " and ", input_file, "."))
-  alignment(args)
+  module$alignment(args)
   toc()
 
   if(return_df) {

@@ -34,11 +34,11 @@ plot_construct <- function(traceQC_input) {
   }
 
   ggplot(p) +
-    geom_text(aes(
-      x = x,
-      y = y,
-      label = text,
-      color = region
+    geom_text(aes_string(
+      x = "x",
+      y = "y",
+      label = "text",
+      color = "region"
     )) +
     scale_color_manual(values = colors,
                        breaks = c(traceQC_input$regions$region, "adapter")) +
@@ -61,7 +61,7 @@ plot_construct <- function(traceQC_input) {
 #'
 plot_score_distribution <- function(traceQC_input) {
   ggplot(traceQC_input$aligned_reads) +
-    geom_histogram(aes(x = score, y = ..density..), binwidth = 5) +
+    geom_histogram(aes_string(x = "score", y = "..density.."), binwidth = 5) +
     ylab("percentage") +
     theme_classic()
 }
@@ -79,11 +79,11 @@ plot_score_distribution <- function(traceQC_input) {
 #'
 #' @examples
 #' data(example_obj)
-#' lorenz_curve(example_obj)
+#' plot_lorenz_curve(example_obj)
 #'
-lorenz_curve <- function(traceQC_input) {
+plot_lorenz_curve <- function(traceQC_input) {
   p <- traceQC_input$aligned_reads %>%
-    group_by(target_seq) %>%
+    group_by(.data$target_seq) %>%
     summarise(count = n()) %>%
     ungroup %>%
     arrange(desc(count)) %>%
@@ -91,11 +91,11 @@ lorenz_curve <- function(traceQC_input) {
 
   scale <- log10(p$count[1])
   p <- ggplot(p) +
-    geom_line(aes(x = x, y = y),
+    geom_line(aes_string(x = "x", y = "y"),
               data = data.frame(x = c(0, nrow(p)), y = c(0, 1)),
               linetype = "dotted") +
-    geom_line(aes(x = x, y = log(count) / scale), color = "blue") +
-    geom_line(aes(x = x, y = cs), color = "red") +
+    geom_line(aes_string(x = "x", y = "log(count) / scale"), color = "blue") +
+    geom_line(aes_string(x = "x", y = "cs"), color = "red") +
     coord_fixed(ratio = nrow(p)) +
     scale_y_continuous(
       breaks = seq(0, 1, 0.2),
@@ -124,15 +124,15 @@ lorenz_curve <- function(traceQC_input) {
 #'
 num_mutation_histogram <- function(traceQC_input) {
   p <- traceQC_input$mutation %>%
-    group_by(target_seq) %>%
+    group_by(.data$target_seq) %>%
     summarise(num_mutation = n()) %>%
     ungroup %>%
-    mutate(num_mutation = case_when(num_mutation >= 10 ~ "10+",
-                                    TRUE ~ as.character(num_mutation))) %>%
-    mutate(num_mutation = factor(num_mutation, levels = c(as.character(1:9), "10+")))
+    mutate(num_mutation = case_when(.data$num_mutation >= 10 ~ "10+",
+                                    TRUE ~ as.character(.data$num_mutation))) %>%
+    mutate(num_mutation = factor(.data$num_mutation, levels = c(as.character(1:9), "10+")))
 
   p <- ggplot(p) +
-    geom_bar(aes(x = num_mutation)) +
+    geom_bar(aes_string(x = "num_mutation")) +
     labs(x = "number of mutations per barcode") +
     theme_classic()
 
@@ -158,19 +158,19 @@ mutation_type <- function(traceQC_input) {
   breaks <- c(1, 2, 4, 8, 16)
 
   df <- traceQC_input$mutation %>%
-    filter(type != "unmutated") %>%
-    group_by(type, start, length, mutate_to) %>%
+    filter(.data$type != "unmutated") %>%
+    group_by(.data$type, .data$start, .data$length, .data$mutate_to) %>%
     summarise(count = n()) %>%
     ungroup %>%
-    mutate(length_category = findInterval(length, breaks)) %>%
-    group_by(type, length_category) %>%
+    mutate(length_category = findInterval(.data$length, breaks)) %>%
+    group_by(.data$type, .data$length_category) %>%
     summarise(count = n()) %>%
     ungroup %>%
-    arrange(type, length_category) %>%
-    mutate(ymax = cumsum(count) / sum(count))
+    arrange(.data$type, .data$length_category) %>%
+    mutate(ymax = cumsum(.data$count) / sum(.data$count))
 
-  plotting_df <- group_by(df, type) %>%
-    summarise(ymax = max(ymax), count = sum(count)) %>%
+  plotting_df <- df %>%  group_by(.data$type) %>%
+    summarise(ymax = max(.data$ymax), count = sum(.data$count)) %>%
     ungroup
 
   plotting_df$ymin <- c(0, plotting_df$ymax[1:2])
@@ -180,22 +180,22 @@ mutation_type <- function(traceQC_input) {
 
   p <-
     ggplot(plotting_df,
-           aes(
-             ymax = ymax,
-             ymin = ymin,
-             xmax = 4,
-             xmin = 3,
-             fill = type
+           aes_string(
+             ymax = "ymax",
+             ymin = "ymin",
+             xmax = "4",
+             xmin = "3",
+             fill = "type"
            )) +
     geom_rect() +
     geom_label(x = 3.5,
-               aes(y = labelPosition, label = label),
+               aes_string(y = "labelPosition", label = "label"),
                size = 3) +
     scale_fill_brewer(palette = 4) +
     coord_polar(theta = "y") +
     xlim(c(2, 4)) +
     scale_y_continuous(
-      breaks = filter(df, type != "mutation", length_category != 5) %>% pull(ymax),
+      breaks = df %>% filter(.data$type != "mutation", .data$length_category != 5) %>% pull(.data$ymax),
       labels = c(breaks[2:length(breaks)], breaks[2:length(breaks)])
     ) +
     theme(
