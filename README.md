@@ -1,6 +1,6 @@
 # TraceQC <img src="man/figures/hexsticker.png" align="right" height="140"/>
 
-TraceQC is a package for quality control of CRISPR Lineage Tracing Seqence Data.
+TraceQC is a R package for quality control (QC) of CRISPR Lineage Tracing Seqence Data. With a simple programming, users can create a HTML QC report page and plots for the QC. Here is an example QC report page: [Click here](https://htmlpreview.github.io/?https://github.com/LiuzLab/TraceQC-Supplementary/blob/master/docs/index.html)!
 
 ## Installation
 
@@ -8,7 +8,7 @@ Dependencies:
 - reticulate which is an R interface to Python: https://rstudio.github.io/reticulate/
 - ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
 - DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
-- 
+
 Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
 
 ```
@@ -30,11 +30,17 @@ A FASTQ file and a reference file are required to use TraceQC. The reference is 
 ```
 ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
 target 23 140
+```
+
+The first line of the reference file represents a construct sequence. The second line indicates target region of the construct. In the lines, two numbers next to a region name specify the start and end locations of the region. Locations should be 0-based, i.e. the first location is indicated as 0. If users want to add additional regions like spacer region or PAM region, users can add more lines that contains the additional regions. The format of the regions is the same as the target region. Here is an example of the refenence file with additional regions:
+
+```
+ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
+target 23 140
 spacer 87 107
 PAM 107 110
 ```
 
-The first line of the reference file represents a construct sequence. The other lines indicates target, spacer, and PAM regions of the construct. In these lines, two numbers next to a region name specify the start and end locations of the region. Be aware that locations are 0-based.
 
 `generate_qc_report` is used to create a QC HTML report. The following script shows an example to create.
 
