@@ -1,8 +1,8 @@
 Package: TraceQC
 Type: Package
 Title: Quality Control of CRISPR Lineage Tracing Seqence Data
-Version: 1.0.0
-Date: 2020-06-04
+Version: 1.0.1
+Date: 2020-06-18
 Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "ctb", "cph"), email = "jingyuan.hu@bcm.edu"),
   person(given = "Hyun-Hwan", family = "Jeong", role = c("aut", "cre", "ctb"), email = "hyun-hwan.jeong@bcm.edu"),
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"))
