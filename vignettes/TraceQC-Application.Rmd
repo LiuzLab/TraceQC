@@ -22,24 +22,23 @@ First, we load the `TraceQC` package and an example object (`example_obj`).
 library(TraceQC)
 library(phangorn)
 library(ggtree)
+library(cowplot)
+library(magrittr)
 data(example_obj)
 ```
 
-Next, `build_character_table` in `TraceQC` will convert the object to a list that contains a matrix and sequence information.
+Next, `build_binary_table` in `TraceQC` will convert the object to a list that contains a matrix (`binary_table'), sequence information (`seq_id'), and .
 
-```{r}
-tree_input <- build_character_table(example_obj)
+```{r, message=FALSE}
+tree_input <- build_binary_table(example_obj)
+summary(tree_input)
 ```
 
 
 Finally, we can reconstruct a phylogenetic tree with the following code:
 
 ``` {r figure.width=8, figure.height=16}
-data <- phyDat(data=tree_input$character_table,type="USER",levels=c(0,1))
-dm <- dist.hamming(data)
-treeUPGMA <- upgma(dm)
-treePars <- optim.parsimony(treeUPGMA, data)
+phyDat_obj <- table_to_phyDat(tree_input)
+plot_phylogenetic_tree(phyDat_obj)
 
-ggtree(treePars) +
-  geom_tiplab()
 ````

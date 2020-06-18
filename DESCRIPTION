@@ -25,13 +25,18 @@ Imports:
   stringr,
   grid,
   rmarkdown,
-  kableExtra
+  kableExtra,
+  treeio,
+  tidytree,
+  ggtree,
+  phangorn,
+  tibble,
+  ape
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 Suggests: 
   knitr,
-  ggtree,
-  phangorn
+  cowplot
 RoxygenNote: 7.1.0
