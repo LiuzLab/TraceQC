@@ -12,7 +12,8 @@
 #' @export
 #'
 build_binary_table <- function(TraceQC_input) {
-  df <- TraceQC_input$mutation %>% filter(.data$count>5,.data$type!="unmutated")
+  df <- TraceQC_input$mutation %>%
+    dplyr::filter(.data$count>5,.data$type!="unmutated")
   seq_id <- df %>% group_by(.data$target_seq, .data$count) %>%
     summarise() %>%
     ungroup %>%
@@ -96,12 +97,12 @@ table_to_phyDat <- function(tree_input) {
   data <- phyDat(data=mat,type="USER",levels=c(0,1))
   dm <- dist.hamming(data)
   tree_UPGMA <- upgma(dm)
-  tree_pars <- optim.parsimony(tree_UPGMA, data)
+  # tree_pars <- optim.parsimony(tree_UPGMA, data)
 
   df_cnt <- tibble::tibble(code = rownames(mat),
                            cnt = tree_input$seq_id$count)
 
-  tree_obj <- tibble::as_tibble(tree_pars) %>%
+  tree_obj <- tibble::as_tibble(tree_UPGMA) %>%
     dplyr::mutate(type = get_events_only_types(.data$label)) %>%
     dplyr::left_join(df_cnt, by=c("label"="code")) %>%
     treeio::as.treedata()
@@ -142,13 +143,13 @@ table_to_phyDat <- function(tree_input) {
 #'           nrow=1)
 #'
 plot_phylogenetic_tree <- function(tree_obj) {
-  span <- max(ape::node.depth(tree_obj@phylo, method=2))
+  span <- max(ape::node.depth.edgelength(tree_obj@phylo))
   p <- tree_obj %>%
     ggtree::ggtree(layout="rectangular") +
-    ggplot2::xlim(0, span) +
+    ggplot2::xlim(0, span * 1.2) +
     ggtree::geom_tiplab(size=2,
                         ggplot2::aes_string(fill="type"),
-                        offset=0.1,
+                        #offset=0.1,
                         geom = "label") +
     ggtree::geom_tippoint(ggplot2::aes_string(color = "log10(cnt)"), size=1) +
     ggplot2::scale_color_gradient(low = "yellow", high = "red", na.value = NA) +
