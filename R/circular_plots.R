@@ -25,12 +25,12 @@ circular_chordgram <-
     target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
     target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
     refseq <-
-      substr(traceQC_input$refseq, start = target_start + 1, stop = target_end)
+      substr(traceQC_input$refseq, start = target_start, stop = target_end)
 
     col_fun <- colorRamp2(c(0,
                             ceiling(max(df$log10_count))), c("yellow", "red"))
     df$color <- col_fun(df$log10_count)
-    l <- nchar(refseq) + 1
+    l <- nchar(refseq)+1
 
     circos.par(start.degree = 90)
     circos.initialize(factors = factor(1), xlim = c(0, ceiling(l * 1.05)))
@@ -54,9 +54,9 @@ circular_chordgram <-
     colors <- brewer.pal(nrow(regions) + 1, "Set2")
     col = rep("black", nchar(refseq))
     for (i in 1:nrow(regions)) {
-      col[(regions[i, "start"] + 1):regions[i, "end"]] <- colors[i]
+      col[(regions[i, "start"]):regions[i, "end"]] <- colors[i]
     }
-    col <- col[target_start + 1:target_end]
+    col <- col[target_start:target_end]
 
     circos.text(1:l,
                 0.5,
@@ -96,14 +96,14 @@ circular_histogram <- function(df, title, traceQC_input) {
   target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
   target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
   refseq <-
-    substr(traceQC_input$refseq, start = target_start + 1, stop = target_end)
+    substr(traceQC_input$refseq, start = target_start, stop = target_end)
 
   scale <- df %>%
     group_by(.data$start) %>%
     summarise(count = sum(.data$count)) %>%
     ungroup()
 
-  l <- nchar(refseq) + 1
+  l <- nchar(refseq)+1
 
   circos.par(start.degree = 90)
   circos.initialize(factors = factor(1), xlim = c(0, ceiling(l * 1.05)))
@@ -124,9 +124,9 @@ circular_histogram <- function(df, title, traceQC_input) {
   colors <- brewer.pal(nrow(regions) + 1, "Set2")
   col = rep("black", nchar(refseq))
   for (i in 1:nrow(regions)) {
-    col[(regions[i, "start"] + 1):regions[i, "end"]] <- colors[i]
+    col[(regions[i, "start"] ):regions[i, "end"]] <- colors[i]
   }
-  col <- col[target_start + 1:target_end]
+  col <- col[target_start:target_end]
   circos.text(1:l,
               0.5,
               strsplit(refseq, split = "") %>% unlist(),
