@@ -27,7 +27,7 @@ plot_construct <- function(traceQC_input) {
   )
   p$region <- "adapter"
   for (i in 1:nrow(traceQC_input$regions)) {
-    from <- traceQC_input$regions[i, "start"] + 1
+    from <- traceQC_input$regions[i, "start"]
     to <- traceQC_input$regions[i, "end"]
     p$region[from:to] <-
       traceQC_input$regions[i, "region"]

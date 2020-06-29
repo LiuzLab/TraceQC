@@ -41,7 +41,7 @@ def alignment(args):
         ref = f.readline().strip()
         for line in f:
             region,start,end = line.strip().split(" ")
-            regions[region] = (int(start),int(end))
+            regions[region] = (int(start),int(end)+1)
 
     data = {"name":[],"seq":[],"ref":[],"score":[]}
     for region in regions:
