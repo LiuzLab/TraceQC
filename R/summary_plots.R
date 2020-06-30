@@ -42,7 +42,7 @@ plot_construct <- function(traceQC_input) {
     )) +
     scale_color_manual(values = colors,
                        breaks = c(traceQC_input$regions$region, "adapter")) +
-    coord_fixed(ratio = nchar(traceQC_input$refseq) %/% 50) +
+    coord_fixed(ratio = nchar(traceQC_input$refseq) %/% 50, clip="off") +
     theme_void()
 }
 
