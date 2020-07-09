@@ -8,6 +8,7 @@ params:
   date: !r Sys.Date()
   set_title: "TraceQC report"
   debug: TRUE
+  traceQC_obj: !r NULL
   input_file: !r system.file("extdata", "test_data", "FASTQ", "example_small.fastq.gz", package="TraceQC")
   ref_file: !r system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
   fastqc_dir: !r tempdir()
@@ -35,14 +36,18 @@ library(kableExtra)
 ```{r data_loading, include=FALSE, warning=FALSE, include=FALSE}
 tic("Running time to create the report")
 if(!params$debug) {
-  fastqc(dirname(params$input_file), qc.dir=params$fastqc_dir)
-  fastqc_file <- get_qcpath(params$input_file, params$fastqc_dir)
-  cur_obj <- TraceQC(
-    input_file = params$input_file,
-    ref_file = params$ref_file,
-    fastqc_file = fastqc_file,
-    ncores = params$ncores
-  )
+  if(is.null(params$traceQC_obj)) {
+      fastqc(dirname(params$input_file), qc.dir=params$fastqc_dir)
+      fastqc_file <- get_qcpath(params$input_file, params$fastqc_dir)
+      cur_obj <- TraceQC(
+        input_file = params$input_file,
+        ref_file = params$ref_file,
+        fastqc_file = fastqc_file,
+        ncores = params$ncores)
+  }
+  else {
+   cur_obj <- readRDS(params$traceQC_obj)
+  }
 } else {
   data(example_obj)
   cur_obj <- example_obj
@@ -164,6 +169,7 @@ sessionInfo()
 ```
 
 ```{r save_rds, include=FALSE, message=FALSE, warning=FALSE}
-saveRDS(cur_obj, file = params$rds_path)
+if(is.null(params$traceQC_obj)) {
+  saveRDS(cur_obj, file = params$rds_path)}
 ```
 
