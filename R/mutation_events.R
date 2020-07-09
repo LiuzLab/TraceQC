@@ -4,6 +4,7 @@
 #' @param deletions A list that contains deletion events.
 #' @param mutations A list that contains mutation (substitution) events.
 #' @param target_seq A list that contains the alignment for each event.
+#' @param score A list that contains the alignment score for each event.
 #' @param read_count A vector that contains counts for each event.
 #'
 #' @import dplyr
@@ -17,6 +18,7 @@ find_position <-
            deletions,
            mutations,
            target_seq,
+           score,
            read_count) {
     insertions <- insertions %>%
       as.data.frame() %>%
@@ -48,9 +50,10 @@ find_position <-
         mutate(
           start = .data$start - .data$align,
           target_seq = .data$target_seq,
+          alignment_score = score,
           count = read_count
         ) %>%
-        select(.data$target_seq, .data$type, .data$start, .data$length, .data$mutate_to, .data$count)
+        select(target_seq, alignment_score, type, start, length, mutate_to, count)
     )
   }
 
@@ -77,13 +80,17 @@ find_position <-
 seq_to_character <- function(traceQC_input,
                              ncores = 4) {
   aligned_reads <- traceQC_input$aligned_reads
-  col_names <- names(aligned_reads)
-  col_names <-
-    col_names[!(col_names %in% c("name", "seq", "ref", "score"))]
-
+  # col_names <- names(aligned_reads)
+  # col_names <-
+  #   col_names[!(col_names %in% c("name", "seq", "ref", "score"))]
+  #
+  # aligned_reads <- aligned_reads %>%
+  #   group_by_at(col_names) %>%
+  #   summarise(count = n()) %>%
+  #   ungroup
   aligned_reads <- aligned_reads %>%
-    group_by_at(col_names) %>%
-    summarise(count = n()) %>%
+    group_by(target_seq,target_ref,score) %>%
+    summarise(count=n()) %>%
     ungroup
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
@@ -98,6 +105,7 @@ seq_to_character <- function(traceQC_input,
     )
   read_counts <- aligned_reads$count
   target_seqs <- aligned_reads$target_seq
+  scores <- aligned_reads$score
 
   mutation_df <- NULL
 
@@ -108,6 +116,7 @@ seq_to_character <- function(traceQC_input,
       all_deletions,
       all_mutations,
       target_seqs,
+      scores,
       read_counts,
       SIMPLIFY = FALSE
     ) %>% bind_rows()
@@ -119,6 +128,7 @@ seq_to_character <- function(traceQC_input,
       all_deletions,
       all_mutations,
       target_seqs,
+      scores,
       read_counts,
       SIMPLIFY = FALSE,
       mc.cores = ncores
