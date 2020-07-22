@@ -1,6 +1,6 @@
 # TraceQC <img src="man/figures/hexsticker.png" align="right" height="140"/>
 
-TraceQC is a R package for quality control (QC) of CRISPR Lineage Tracing Seqence Data. With a simple programming, users can create a HTML QC report page and plots for the QC. Here is an example QC report page: [Click here](https://htmlpreview.github.io/?https://github.com/LiuzLab/TraceQC-Supplementary/blob/master/docs/index.html)!
+TraceQC is a R package for quality control (QC) of CRISPR Lineage Tracing Sequence Data. With simple programming, users can create an HTML QC report page and plots for the QC. Here is an example QC report page: [Click here](https://htmlpreview.github.io/?https://github.com/LiuzLab/TraceQC-Supplementary/blob/master/docs/index.html)!
 
 ## Installation
 
@@ -9,7 +9,7 @@ Dependencies:
 - ComplexHeatmap:http://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html
 - DECIPHER: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
 
-Currently, installation of TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside a R session.
+Currently, installing TraceQC is only available using `devtools`, and a personal Github token is required to install TraceQC. Please follow the following scripts for the installation inside an R session.
 
 ```
 BiocManager::install(c("ComplexHeatmap", "DECIPHER"))
@@ -32,7 +32,8 @@ ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACAC
 target 24 140
 ```
 
-The first line of the reference file represents a construct sequence. The second line indicates target region of the construct. In the lines, two numbers next to a region name specify the start and end locations of the region. Locations should be 1-based, i.e. the first location is indicated as 1. If users want to add additional regions like spacer region or PAM region, users can add more lines that contains the additional regions. The format of the regions is the same as the target region. Here is an example of the refenence file with additional regions:
+The first line of the reference file represents a construct sequence. The second line indicates the target region of the construct. In the lines, two numbers next to a region name specify the region's start and end locations. Locations should be 1-based, i.e., the first location is 1. If users want to add additional regions like the spacer region or PAM region, they can add more lines containing the additional regions. The format of the regions is the same as the target region. Here is an example of the reference file with other regions:
+
 
 ```
 ATGGACTATCATATGCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAACACCGGTAGACGCACCTCCACCCCACAGTGGGGTTAGAGCTAGAAATAGCAAGTTAACCTAAGGCTAGTCCGTTATCAACTTGAA
@@ -58,7 +59,7 @@ obj <- generate_qc_report(
 summary(obj)
 ```
 
-The following example shows how to create an TraceQC object.
+The following example shows how to create a TraceQC object.
 
 ```r
 library(TraceQC)

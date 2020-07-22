@@ -4,7 +4,7 @@
 \alias{find_position}
 \title{Creating a data frame of mutation events.}
 \usage{
-find_position(insertions, deletions, mutations, target_seq, read_count)
+find_position(insertions, deletions, mutations, target_seq, score, read_count)
 }
 \arguments{
 \item{insertions}{A list that contains insertion events.}
@@ -14,6 +14,8 @@ find_position(insertions, deletions, mutations, target_seq, read_count)
 \item{mutations}{A list that contains mutation (substitution) events.}
 
 \item{target_seq}{A list that contains the alignment for each event.}
+
+\item{score}{A list that contains the alignment score for each event.}
 
 \item{read_count}{A vector that contains counts for each event.}
 }
