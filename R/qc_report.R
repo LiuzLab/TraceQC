@@ -97,3 +97,45 @@ generate_qc_report <-
   }
 
 
+
+
+generate_qc_report_from_obj <-
+  function(
+    traceQC_obj_path =NULL,
+    output_path = NULL,
+    ncores = 4,
+    title = "TraceQC report",
+    preview = FALSE
+  ) {
+
+    if(is.null(output_path)) {
+      output_path <- tempfile(fileext = ".html")
+    }
+    template_path <- system.file(
+      "Rmd",
+      "TraceQC-template.Rmd",
+      package = "TraceQC"
+    )
+
+    rds_path <- tempfile(fileext = ".rds")
+    knitr_params <- list()
+    knitr_params$traceQC_obj <- get_abspath(traceQC_obj_path)
+    knitr_params$debug <- FALSE
+    knitr_params$input_file <- NULL
+    knitr_params$ref_file <- NULL
+    knitr_params$fastqc_dir <- NULL
+    knitr_params$ncores <- ncores
+    knitr_params$date <- Sys.Date()
+    knitr_params$set_title <- title
+
+    rmdout_path <- render(
+      input = get_abspath(template_path),
+      output_format = "html_document",
+      output_file = get_abspath(output_path),
+      params = knitr_params
+    )
+
+    if(preview)
+      utils::browseURL(paste0("file://", rmdout_path))
+  }
+
