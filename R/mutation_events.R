@@ -140,6 +140,7 @@ seq_to_character <- function(traceQC_input,
   mutation_df <- rbind(
     data.frame(
       target_seq = unmutated$target_seq,
+      alignment_score = unmutated$score,
       type = "unmutated",
       start = 0,
       length = 0,

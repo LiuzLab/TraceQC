@@ -4,10 +4,13 @@
 \alias{build_binary_table}
 \title{Convert A TraceQC object to a matrix}
 \usage{
-build_binary_table(TraceQC_input)
+build_binary_table(TraceQC_input, count_cutoff = 5)
 }
 \arguments{
 \item{TraceQC_input}{A TraceQC object}
+
+\item{count_cutoff}{The barcode cutoff. The function only considers barcodes
+whose raw counts are equal or greater than the cutoff.}
 }
 \value{
 It returns a list that contains a character matrix, a sequence
