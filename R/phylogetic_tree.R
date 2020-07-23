@@ -1,6 +1,8 @@
 #' Convert A TraceQC object to a matrix
 #'
 #' @param TraceQC_input A TraceQC object
+#' @param count_cutoff The barcode cutoff. The function only considers barcodes
+#' whose raw counts are equal or greater than the cutoff.
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
@@ -11,9 +13,10 @@
 #'
 #' @export
 #'
-build_binary_table <- function(TraceQC_input) {
+build_binary_table <- function(TraceQC_input,
+                               count_cutoff = 5) {
   df <- TraceQC_input$mutation %>%
-    dplyr::filter(.data$count>5,.data$type!="unmutated")
+    dplyr::filter(.data$count>count_cutoff,.data$type!="unmutated")
   seq_id <- df %>% group_by(.data$target_seq, .data$count) %>%
     summarise() %>%
     ungroup %>%
@@ -99,15 +102,17 @@ table_to_phyDat <- function(tree_input) {
   tree_UPGMA <- upgma(dm)
   # tree_pars <- optim.parsimony(tree_UPGMA, data)
 
-  df_cnt <- tibble::tibble(code = rownames(mat),
-                           cnt = tree_input$seq_id$count)
+  # df_cnt <- tibble::tibble(code = rownames(mat),
+  #                          cnt = tree_input$seq_id$count)
 
-  tree_obj <- tibble::as_tibble(tree_UPGMA) %>%
-    dplyr::mutate(type = get_events_only_types(.data$label)) %>%
-    dplyr::left_join(df_cnt, by=c("label"="code")) %>%
-    treeio::as.treedata()
-
-  tree_obj
+#   tree_obj <- tibble::as_tibble(tree_UPGMA) %>%
+#     filter(!is.na(label)) %>%
+#     dplyr::mutate(type = get_events_only_types(.data$label)) %>%
+#     dplyr::left_join(df_cnt, by=c("label"="code")) %>%
+#     treeio::as.treedata()
+#
+#   tree_obj
+  tree_UPGMA
 }
 
 #' Plot a phylogenetic tree of a tree object using ggtree
