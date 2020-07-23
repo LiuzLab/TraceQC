@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^TraceQC\.Rcheck$
+^TraceQC.*\.tar\.gz$
+^TraceQC.*\.tgz$
