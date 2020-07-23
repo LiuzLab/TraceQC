@@ -4,3 +4,6 @@
 .Ruserdata
 .DS_Store
 inst/doc
+TraceQC.Rcheck/
+TraceQC*.tar.gz
+TraceQC*.tgz

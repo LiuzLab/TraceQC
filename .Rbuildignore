@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.md$
+^wiki$
+^data-raw$
+^TraceQC\.Rcheck$
+^TraceQC.*\.tar\.gz$
+^TraceQC.*\.tgz$
