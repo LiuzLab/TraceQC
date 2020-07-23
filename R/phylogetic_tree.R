@@ -82,6 +82,12 @@ table_to_phyDat <- function(tree_input) {
   rownames(mat) <-
     sapply(1:nrow(mat), function(i) get_events(mat, i))
 
+  # There was some duplication of mutations. Is it supposed to happen?
+  seq_cnt <- tree_input$seq_id$count
+  seq_cnt <- seq_cnt[!duplicated(rownames(mat))]
+  mat <- mat[!duplicated(rownames(mat)),]
+
+
   get_events_only_types <- function(x) {
     if(length(x) == 1) {
       if(is.na(x)) {
@@ -100,19 +106,17 @@ table_to_phyDat <- function(tree_input) {
   data <- phyDat(data=mat,type="USER",levels=c(0,1))
   dm <- dist.hamming(data)
   tree_UPGMA <- upgma(dm)
-  # tree_pars <- optim.parsimony(tree_UPGMA, data)
+  tree_pars <- optim.parsimony(tree_UPGMA, data)
 
-  # df_cnt <- tibble::tibble(code = rownames(mat),
-  #                          cnt = tree_input$seq_id$count)
+  df_cnt <- tibble::tibble(code = rownames(mat),
+                           cnt = seq_cnt)
 
-#   tree_obj <- tibble::as_tibble(tree_UPGMA) %>%
-#     filter(!is.na(label)) %>%
-#     dplyr::mutate(type = get_events_only_types(.data$label)) %>%
-#     dplyr::left_join(df_cnt, by=c("label"="code")) %>%
-#     treeio::as.treedata()
-#
-#   tree_obj
-  tree_UPGMA
+  tree_obj <- tibble::as_tibble(tree_UPGMA) %>%
+    dplyr::mutate(type = get_events_only_types(.data$label)) %>%
+    dplyr::left_join(df_cnt, by=c("label"="code")) %>%
+    treeio::as.treedata()
+
+  tree_obj
 }
 
 #' Plot a phylogenetic tree of a tree object using ggtree
