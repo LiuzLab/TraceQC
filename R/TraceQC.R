@@ -11,17 +11,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' library(TraceQC)
 #' library(fastqcr)
 #' input_file <- system.file("extdata", "test_data",
 #'                           "fastq", "example_small.fastq.gz", package="TraceQC")
 #' ref_file <- system.file("extdata", "test_data", "ref",
 #'                         "ref.txt", package="TraceQC")
-#' qc_dir <- tempdir()
-#' fastqc(system.file("extdata", "test_data",
-#'                    "fastq", package = "TraceQC"),
-#'        qc.dir=qc_dir)
+#' qc_dir <- fastqc.file(input_file)
 #'
 #' input_qc_path <- get_qcpath(input_file, qc_dir)
 #'
@@ -31,7 +27,6 @@
 #'                ncores=1)
 #'
 #' obj$refseq
-#' }
 TraceQC <-
   function(input_file,
            ref_file,

@@ -37,6 +37,7 @@ Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 Suggests: 
-  knitr,
-  cowplot
+    knitr,
+    cowplot,
+    testthat
 RoxygenNote: 7.1.1

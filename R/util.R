@@ -51,6 +51,36 @@ seq_split <- function(s, len = 50) {
 }
 
 
+#' Running FASTQC for a file.
+#'
+#' @param input_file A FASTQ file path
+#' @param threads The number of threads will be used in FASTQC
+#'
+#' @return It returns a path to the QC file.
+#' @export
+#'
+#' @examples
+#' input_file <- system.file("extdata", "test_data",
+#'                           "fastq", "example.fastq.gz", package="TraceQC")
+#' fastqc.file(input_file)
+fastqc.file <- function(input_file,
+                        threads = 4) {
+  tmp_dir <- tempdir()
+  fq_dir <- file.path(tmp_dir, basename(input_file), "fq")
+  qc_dir <- file.path(tmp_dir, basename(input_file), "qc")
+  dir.create(fq_dir, recursive=T)
+  dir.create(qc_dir, recursive=T)
+
+  fq_path <- file.path(fq_dir, basename(input_file))
+  if(!file.exists(fq_path))
+    file.symlink(input_file, fq_path)
+  ref_file <- system.file("extdata", "test_data", "ref",
+                          "ref.txt", package="TraceQC")
+
+  fastqcr::fastqc(fq.dir = fq_dir, qc.dir=qc_dir, threads = threads)
+  qc_dir
+}
+
 #' Installation necessary external software for TraceQC
 #'
 #' @export
