@@ -38,6 +38,7 @@ generate_qc_report <-
     ref_file = NULL,
     fastqc_dir = NULL,
     output_path = NULL,
+    alignment_score_threshold=NULL,
     ncores = 4,
     title = "TraceQC report",
     preview = FALSE
@@ -79,6 +80,7 @@ generate_qc_report <-
     knitr_params$ref_file <- get_abspath(ref_file)
     knitr_params$fastqc_dir <- get_abspath(fastqc_dir)
     knitr_params$ncores <- ncores
+    knitr_params$alignment_score_threshold <- alignment_score_threshold
     knitr_params$date <- Sys.Date()
     knitr_params$rds_path <- rds_path
     knitr_params$set_title <- title
@@ -101,8 +103,9 @@ generate_qc_report <-
 
 generate_qc_report_from_obj <-
   function(
-    traceQC_obj_path =NULL,
+    traceQC_obj_path = NULL,
     output_path = NULL,
+    alignment_score_threshold=NULL,
     ncores = 4,
     title = "TraceQC report",
     preview = FALSE
@@ -125,6 +128,7 @@ generate_qc_report_from_obj <-
     knitr_params$ref_file <- NULL
     knitr_params$fastqc_dir <- NULL
     knitr_params$ncores <- ncores
+    knitr_params$alignment_score_threshold <- alignment_score_threshold
     knitr_params$date <- Sys.Date()
     knitr_params$set_title <- title
 

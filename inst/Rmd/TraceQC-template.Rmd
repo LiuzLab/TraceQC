@@ -13,6 +13,7 @@ params:
   ref_file: !r system.file("extdata", "test_data", "ref", "ref.txt", package="TraceQC")
   fastqc_dir: !r tempdir()
   rds_path: !r tempfile(fileext=".rds")
+  alignment_score_threshold: !r NULL
   ncores: 1
 ---
 
@@ -99,6 +100,13 @@ qc_plot(cur_obj$qc, "Sequence Duplication Levels")
 
 ```{r align_score, echo=FALSE, message=FALSE, warning=FALSE}
 plot_score_distribution(cur_obj)
+```
+
+Applying filter with alignment score `r params$alignment_score_threshold`
+``` {r filter, echo=FALSE, message=FALSE, warning=FALSE}
+if (!is.null(params$alignment_score_threshold)) {
+  cur_obj$aligned_reads <- filter(cur_obj$aligned_reads,score>params$alignment_score_threshold)
+  cur_obj$mutation <- filter(cur_obj$mutation,alignment_score>params$alignment_score_threshold)}
 ```
 
 ## Barcode distribution inequality

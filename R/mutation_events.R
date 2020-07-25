@@ -89,8 +89,8 @@ seq_to_character <- function(traceQC_input,
   #   summarise(count = n()) %>%
   #   ungroup
   aligned_reads <- aligned_reads %>%
-    group_by(target_seq,target_ref,score) %>%
-    summarise(count=n()) %>%
+    group_by(target_seq,target_ref) %>%
+    summarise(count=n(),score=max(score)) %>%
     ungroup
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
