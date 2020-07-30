@@ -79,9 +79,12 @@ create_TraceQC_object <-
   function(aligned_reads_file,
            ref_file,
            fastqc_file,
+           alignment_score_threshold,
+           abundance_threshold,
            ncores) {
 
-    aligned_reads <- read_tsv(aligned_reads_file)
+    aligned_reads <- read_tsv(aligned_reads_file) %>%
+      filter(score>alignment_score_threshold)
 
     ref <- readLines(ref_file)
     refseq <- ref[1]
@@ -105,7 +108,7 @@ create_TraceQC_object <-
 
     message("Running mutation event identification.")
     tic("mutation event identification")
-    obj$mutation <- seq_to_character(obj,ncores)
+    obj$mutation <- seq_to_character(obj,ncores,abundance_threshold)
     toc()
     obj
   }
