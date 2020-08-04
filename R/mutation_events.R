@@ -79,7 +79,8 @@ find_position <-
 #'
 seq_to_character <- function(traceQC_input,
                              ncores = 4,
-                             abundance_threshold = 0) {
+                             abundance_threshold = 0,
+                             alignment_score_threshold = 0) {
   aligned_reads <- traceQC_input$aligned_reads
   # col_names <- names(aligned_reads)
   # col_names <-
@@ -90,6 +91,7 @@ seq_to_character <- function(traceQC_input,
   #   summarise(count = n()) %>%
   #   ungroup
   aligned_reads <- aligned_reads %>%
+    filter(score>alignment_score_threshold) %>%
     group_by(target_seq,target_ref) %>%
     summarise(count=n(),score=max(score)) %>%
     ungroup %>%
