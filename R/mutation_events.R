@@ -94,9 +94,12 @@ seq_to_character <- function(traceQC_input,
     filter(score>alignment_score_threshold) %>%
     group_by(target_seq,target_ref) %>%
     summarise(count=n(),score=max(score)) %>%
-    ungroup %>%
-    filter(count>abundance_threshold)
+    ungroup
 
+  unmutated <- aligned_reads %>%
+    filter(.data$target_seq == .data$target_ref)
+
+  aligned_reads <- filter(aligned_reads,count>abundance_threshold)
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq, "-+")
   all_mutations <-
@@ -139,8 +142,6 @@ seq_to_character <- function(traceQC_input,
     ) %>% bind_rows()
   }
 
-  unmutated <- aligned_reads %>%
-    filter(.data$target_seq == .data$target_ref)
   mutation_df <- rbind(
     data.frame(
       target_seq = unmutated$target_seq,

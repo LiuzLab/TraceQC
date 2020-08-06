@@ -100,7 +100,7 @@ create_TraceQC_object <-
       qc <- qc_read(fastqc_file)
     }
 
-    obj <- list(aligned_reads=filtered_aligned_reads,
+    obj <- list(aligned_reads=aligned_reads,
                 refseq=refseq,
                 regions=regions,
                 qc=qc)
