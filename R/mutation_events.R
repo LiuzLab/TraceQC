@@ -79,17 +79,11 @@ find_position <-
 #'
 seq_to_character <- function(traceQC_input,
                              ncores = 4,
-                             abundance_threshold = 0,
-                             alignment_score_threshold = 0) {
+                             alignment_score_threshold = 0,
+                             abundance_threshold = 0) {
   aligned_reads <- traceQC_input$aligned_reads
-  # col_names <- names(aligned_reads)
-  # col_names <-
-  #   col_names[!(col_names %in% c("name", "seq", "ref", "score"))]
-  #
-  # aligned_reads <- aligned_reads %>%
-  #   group_by_at(col_names) %>%
-  #   summarise(count = n()) %>%
-  #   ungroup
+
+  print(sum(aligned_reads$score>alignment_score_threshold))
   aligned_reads <- aligned_reads %>%
     filter(score>alignment_score_threshold) %>%
     group_by(target_seq,target_ref) %>%
@@ -100,6 +94,7 @@ seq_to_character <- function(traceQC_input,
     filter(.data$target_seq == .data$target_ref)
 
   aligned_reads <- filter(aligned_reads,count>abundance_threshold)
+
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq, "-+")
   all_mutations <-

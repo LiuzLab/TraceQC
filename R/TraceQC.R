@@ -107,8 +107,10 @@ create_TraceQC_object <-
 
     message("Running mutation event identification.")
     tic("mutation event identification")
-    obj$mutation <- seq_to_character(obj,ncores,
-                        alignment_score_threshold,abundance_threshold)
+    obj$mutation <- seq_to_character(obj,
+                                     ncores,
+                                     alignment_score_threshold,
+                                     abundance_threshold)
     toc()
     obj
   }
