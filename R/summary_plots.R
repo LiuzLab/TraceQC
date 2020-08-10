@@ -167,7 +167,8 @@ mutation_type <- function(traceQC_input) {
     summarise(count = n()) %>%
     ungroup %>%
     arrange(.data$type, .data$length_category) %>%
-    mutate(ymax = cumsum(.data$count) / sum(.data$count))
+    mutate(ymax = cumsum(.data$count) / sum(.data$count),
+           labels = breaks[2:length(breaks)][length_category])
 
   plotting_df <- df %>%  group_by(.data$type) %>%
     summarise(ymax = max(.data$ymax), count = sum(.data$count)) %>%
@@ -195,8 +196,8 @@ mutation_type <- function(traceQC_input) {
     coord_polar(theta = "y") +
     xlim(c(2, 4)) +
     scale_y_continuous(
-      breaks = df %>% filter(.data$type != "mutation", .data$length_category != 5) %>% pull(.data$ymax),
-      labels = c(breaks[2:length(breaks)], breaks[2:length(breaks)])
+      breaks = df %>% filter(.data$type != "mutation") %>% pull(.data$ymax),
+      labels = df %>% filter(.data$type != "mutation") %>% pull(.data$labels)
     ) +
     theme(
       legend.position = "none",
