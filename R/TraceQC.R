@@ -79,9 +79,9 @@ create_TraceQC_object <-
   function(aligned_reads_file,
            ref_file,
            fastqc_file,
-           alignment_score_threshold,
-           abundance_threshold,
-           ncores) {
+           alignment_score_threshold=0,
+           abundance_threshold=0,
+           ncores=1) {
 
     aligned_reads <- read_tsv(aligned_reads_file)
 
