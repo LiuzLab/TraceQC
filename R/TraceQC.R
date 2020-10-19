@@ -105,6 +105,7 @@ create_TraceQC_object <-
                 regions=regions,
                 qc=qc)
 
+    abundance_threshold <- nrow(aligned_reads) * abundance_threshold
     message("Running mutation event identification.")
     tic("mutation event identification")
     obj$mutation <- seq_to_character(obj,
