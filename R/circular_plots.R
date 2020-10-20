@@ -51,10 +51,12 @@ circular_chordgram <-
       )
     }
 
-    colors <- brewer.pal(nrow(regions) + 1, "Set2")
+    region_names <- unique(regions$region)
+    colors <- brewer.pal(length(region_names) + 1, "Set2")
+    names(colors) <- region_names
     col = rep("black", nchar(refseq))
     for (i in 1:nrow(regions)) {
-      col[(regions[i, "start"]):regions[i, "end"]] <- colors[i]
+      col[(regions[i, "start"]):regions[i, "end"]] <- colors[regions[i,"region"]]
     }
     col <- col[target_start:target_end]
 
@@ -121,10 +123,12 @@ circular_histogram <- function(df, title, traceQC_input) {
     major.at = seq(0, l, 10),
     labels = seq(0, l, 10)
   )
-  colors <- brewer.pal(nrow(regions) + 1, "Set2")
+  region_names <- unique(regions$region)
+  colors <- brewer.pal(length(region_names) + 1, "Set2")
+  names(colors) <- region_names
   col = rep("black", nchar(refseq))
   for (i in 1:nrow(regions)) {
-    col[(regions[i, "start"] ):regions[i, "end"]] <- colors[i]
+    col[(regions[i, "start"]):regions[i, "end"]] <- colors[regions[i,"region"]]
   }
   col <- col[target_start:target_end]
   circos.text(1:l,
