@@ -16,7 +16,7 @@
 #' plot_construct(example_obj)
 #'
 plot_construct <- function(traceQC_input) {
-  colors <- brewer.pal(nrow(traceQC_input$regions) + 1, "Set2")
+  colors <- brewer.pal(length(unique(traceQC_input$regions$region)) + 1, "Set2")
   p <- data.frame(
     text = unlist(strsplit(traceQC_input$refseq, "")),
     pos = 1:nchar(traceQC_input$refseq),
@@ -41,7 +41,7 @@ plot_construct <- function(traceQC_input) {
       color = "region"
     )) +
     scale_color_manual(values = colors,
-                       breaks = c(traceQC_input$regions$region, "adapter")) +
+                       breaks = c(unique(traceQC_input$regions$region), "adapter")) +
     coord_fixed(ratio = nchar(traceQC_input$refseq) %/% 50, clip="off") +
     theme_void()
 }
