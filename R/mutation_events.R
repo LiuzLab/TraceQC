@@ -79,26 +79,20 @@ find_position <-
 #'
 seq_to_character <- function(traceQC_input,
                              ncores = 4,
-                             use_CPM,
                              alignment_score_threshold = 0,
                              abundance_threshold = 0) {
   aligned_reads <- traceQC_input$aligned_reads
-  tot_count <- nrow(aligned_reads)
+
   aligned_reads <- aligned_reads %>%
     filter(score>alignment_score_threshold) %>%
     group_by(target_seq,target_ref) %>%
     summarise(count=n(),score=max(score)) %>%
     ungroup
 
-  if(use_CPM) {
-    aligned_reads$count <- aligned_reads$count * 10e6 / tot_count
-    abundance_threshold <- 10e6 * abundance_threshold}
-  else {
-    abundance_threshold <- sum(tot_count * abundance_threshold}
-
-  aligned_reads <- filter(aligned_reads,count>abundance_threshold)
   unmutated <- aligned_reads %>%
     filter(.data$target_seq == .data$target_ref)
+
+  aligned_reads <- filter(aligned_reads,count>abundance_threshold)
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq, "-+")
