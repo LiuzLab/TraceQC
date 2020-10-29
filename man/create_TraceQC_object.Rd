@@ -4,7 +4,15 @@
 \alias{create_TraceQC_object}
 \title{Creating an input object for TraceQC with an alignment result.}
 \usage{
-create_TraceQC_object(aligned_reads_file, ref_file, fastqc_file, ncores)
+create_TraceQC_object(
+  aligned_reads_file,
+  ref_file,
+  fastqc_file,
+  use_CPM = TRUE,
+  alignment_score_cutoff = 0,
+  abundance_cutoff = 0,
+  ncores = 1
+)
 }
 \arguments{
 \item{aligned_reads_file}{A path to store alignment output file.}
@@ -12,6 +20,12 @@ create_TraceQC_object(aligned_reads_file, ref_file, fastqc_file, ncores)
 \item{ref_file}{A path of a reference sequence file.}
 
 \item{fastqc_file}{A path of a FASTQC file.}
+
+\item{use_CPM}{Use count per million}
+
+\item{alignment_score_cutoff}{Minimum cutoff for alignment score}
+
+\item{abundance_cutoff}{Minimum cutoff for read count. This parameter are used with use_CPM.}
 
 \item{ncores}{The number of cores for the parallel processing.}
 }
