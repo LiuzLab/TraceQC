@@ -61,6 +61,9 @@ find_position <-
 #'
 #' @param traceQC_input A TraceQC object.
 #' @param ncores The number of cores for parallelization.
+#' @param use_CPM Use count per million
+#' @param alignment_score_cutoff Minimum cutoff for alignment score
+#' @param abundance_cutoff Minimum cutoff for read count. This parameter are used with use_CPM.
 #'
 #' @importFrom parallel mcmapply
 #' @importFrom stringr str_locate_all
@@ -79,12 +82,13 @@ find_position <-
 #'
 seq_to_character <- function(traceQC_input,
                              ncores = 4,
-                             alignment_score_threshold = 0,
-                             abundance_threshold = 0) {
+                             use_CPM,
+                             alignment_score_cutoff = 0,
+                             abundance_cutoff = 0) {
   aligned_reads <- traceQC_input$aligned_reads
 
   aligned_reads <- aligned_reads %>%
-    filter(score>alignment_score_threshold) %>%
+    filter(score>alignment_score_cutoff) %>%
     group_by(target_seq,target_ref) %>%
     summarise(count=n(),score=max(score)) %>%
     ungroup
@@ -92,7 +96,7 @@ seq_to_character <- function(traceQC_input,
   unmutated <- aligned_reads %>%
     filter(.data$target_seq == .data$target_ref)
 
-  aligned_reads <- filter(aligned_reads,count>abundance_threshold)
+  aligned_reads <- filter(aligned_reads,count>abundance_cutoff)
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq, "-+")

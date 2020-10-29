@@ -58,6 +58,9 @@ TraceQC <-
 #' @param aligned_reads_file A path to store alignment output file.
 #' @param ref_file A path of a reference sequence file.
 #' @param fastqc_file A path of a FASTQC file.
+#' @param use_CPM Use count per million
+#' @param alignment_score_cutoff Minimum cutoff for alignment score
+#' @param abundance_cutoff Minimum cutoff for read count. This parameter are used with use_CPM.
 #' @param ncores The number of cores for the parallel processing.
 #'
 #' @importFrom magrittr %>%
@@ -79,8 +82,9 @@ create_TraceQC_object <-
   function(aligned_reads_file,
            ref_file,
            fastqc_file,
-           alignment_score_threshold=0,
-           abundance_threshold=0,
+           use_CPM=TRUE,
+           alignment_score_cutoff=0,
+           abundance_cutoff=0,
            ncores=1) {
 
     aligned_reads <- read_tsv(aligned_reads_file)
@@ -105,13 +109,13 @@ create_TraceQC_object <-
                 regions=regions,
                 qc=qc)
 
-    abundance_threshold <- nrow(aligned_reads) * abundance_threshold
     message("Running mutation event identification.")
     tic("mutation event identification")
     obj$mutation <- seq_to_character(obj,
                                      ncores,
-                                     alignment_score_threshold,
-                                     abundance_threshold)
+                                     use_CPM,
+                                     alignment_score_cutoff,
+                                     abundance_cutoff)
     toc()
     obj
   }
