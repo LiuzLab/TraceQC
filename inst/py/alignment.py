@@ -26,8 +26,8 @@ def get_alignment_result(param):
     data["seq"] = align[1]
     data["ref"] = align[0]
     data["score"] = align[2]
-    start = min(np.argwhere(cs==target_start)[0])
-    end = min(np.argwhere(cs==target_end)[0])
+    target_start = min(np.argwhere(cs==target_start)[0])
+    target_end = min(np.argwhere(cs==target_end)[0])
     data["target_ref"] = align[0][target_start:target_end]
     data["target_seq"] = align[1][target_start:target_end]
     return data
