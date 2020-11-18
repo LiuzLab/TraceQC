@@ -145,6 +145,7 @@ seq_to_character <- function(traceQC_input,
     ) %>% bind_rows()
   }
 
+  if (nrow(unmutated)>0) {
   mutation_df <- rbind(
     data.frame(
       target_seq = unmutated$target_seq,
@@ -156,7 +157,7 @@ seq_to_character <- function(traceQC_input,
       count = unmutated$count
     ),
     mutation_df
-  )
+  )}
 
   return(mutation_df)
 }
