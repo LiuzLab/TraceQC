@@ -96,6 +96,7 @@ seq_to_character <- function(traceQC_input,
   unmutated <- aligned_reads %>%
     filter(.data$target_seq == .data$target_ref)
 
+  abundance_cutoff <- sum(aligned_reads$count) * abundance_cutoff
   if (use_CPM) {
     aligned_reads$count <- aligned_reads$count * 1e6 / sum(aligned_reads$count)
     abundance_cutoff <- 1e6 * abundance_cutoff
