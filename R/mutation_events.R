@@ -93,14 +93,14 @@ seq_to_character <- function(traceQC_input,
     summarise(count=n(),score=max(score)) %>%
     ungroup
 
-  unmutated <- aligned_reads %>%
-    filter(.data$target_seq == .data$target_ref)
-
-  abundance_cutoff <- sum(aligned_reads$count) * abundance_cutoff
-  if (use_CPM) {
+  if(use_CPM) {
     aligned_reads$count <- aligned_reads$count * 1e6 / sum(aligned_reads$count)
     abundance_cutoff <- 1e6 * abundance_cutoff
+  } else {
+    abundance_cutoff <- sum(aligned_reads$count) * abundance_cutoff
   }
+  unmutated <- aligned_reads %>%
+    filter(.data$target_seq == .data$target_ref)
   aligned_reads <- filter(aligned_reads,count>abundance_cutoff)
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
