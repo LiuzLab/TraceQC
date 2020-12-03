@@ -34,24 +34,45 @@ TraceQC <-
            alignment_output_file=NULL,
            ncores=4) {
 
-  if(is.null(alignment_output_file)) {
-    alignment_output_file <- tempfile()
+    if(is.null(alignment_output_file)) {
+      alignment_output_file <- tempfile()
+    }
+
+    sequence_alignment(
+      input_file = input_file,
+      ref_file = ref_file,
+      output_file = alignment_output_file,
+      ncores = ncores
+    )
+    create_TraceQC_object(
+      alignment_output_file,
+      ref_file,
+      fastqc_file,
+      ncores
+    )
   }
 
-  sequence_alignment(
-    input_file = input_file,
-    ref_file = ref_file,
-    output_file = alignment_output_file,
-    ncores = ncores
-  )
-  create_TraceQC_object(
-    alignment_output_file,
-    ref_file,
-    fastqc_file,
-    ncores
-    )
+#' Parsing reference sequence file
+#' @param ref_file A path of a reference sequence file.
+#' #' @return A list with those four elements.
+#' \itemize{
+#'   \item `refseq': The reference sequence.
+#'   \item `regions': Detailed information about the reference sequence.
+#' }
+#' #' @export
+#'
+parse_ref_file <- function(ref_file) {
+  ref <- readLines(ref_file)
+  refseq <- ref[1]
+  regions <- strsplit(ref[2:length(ref)],split=" ")
+  regions <- do.call(rbind,regions) %>%
+    as.data.frame() %>%
+    setNames(c("region","start","end")) %>%
+    mutate(start=strtoi(.data$start),
+           end=strtoi(.data$end)) %>%
+    mutate(region=as.character(.data$region))
+  list(refseq=refseq,regions=regions)
 }
-
 
 #' Creating an input object for TraceQC with an alignment result.
 #'
@@ -89,15 +110,7 @@ create_TraceQC_object <-
 
     aligned_reads <- read_tsv(aligned_reads_file)
 
-    ref <- readLines(ref_file)
-    refseq <- ref[1]
-    regions <- strsplit(ref[2:length(ref)],split=" ")
-    regions <- do.call(rbind,regions) %>%
-      as.data.frame() %>%
-      setNames(c("region","start","end")) %>%
-      mutate(start=strtoi(.data$start),
-             end=strtoi(.data$end)) %>%
-      mutate(region=as.character(.data$region))
+    ref <- parse_ref_file(ref_file)
 
     qc <- NULL
     if(!is.null(fastqc_file)) {
@@ -105,8 +118,8 @@ create_TraceQC_object <-
     }
 
     obj <- list(aligned_reads=aligned_reads,
-                refseq=refseq,
-                regions=regions,
+                refseq=ref$refseq,
+                regions=ref$regions,
                 qc=qc)
 
     message("Running mutation event identification.")
