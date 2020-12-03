@@ -54,12 +54,12 @@ TraceQC <-
 
 #' Parsing reference sequence file
 #' @param ref_file A path of a reference sequence file.
-#' #' @return A list with those four elements.
+#' @return A list with those four elements.
 #' \itemize{
 #'   \item `refseq': The reference sequence.
 #'   \item `regions': Detailed information about the reference sequence.
 #' }
-#' #' @export
+#' @export
 #'
 parse_ref_file <- function(ref_file) {
   ref <- readLines(ref_file)

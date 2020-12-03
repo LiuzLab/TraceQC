@@ -7,13 +7,14 @@
 parse_ref_file(ref_file)
 }
 \arguments{
-\item{ref_file}{A path of a reference sequence file.
-#' @return A list with those four elements.
+\item{ref_file}{A path of a reference sequence file.}
+}
+\value{
+A list with those four elements.
 \itemize{
   \item `refseq': The reference sequence.
   \item `regions': Detailed information about the reference sequence.
 }
-#' @export}
 }
 \description{
 Parsing reference sequence file
