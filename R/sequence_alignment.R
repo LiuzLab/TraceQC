@@ -67,3 +67,43 @@ sequence_alignment <- function(input_file,
     return(NULL)
   }
 }
+
+#' Function for finding threshold of sequence alignment. The function randomly
+#' permutate certain percentage reference sequence and perform global alignment
+#' with the original reference sequence. By use the permutated sequence alignment
+#' score, users can filter the TraceQC alignment result.
+#'
+#' @param ref_file A path of a reference sequence file.
+#' @param output_file The output path. An output dataframe will be
+#' stored at the path.
+#' @param match The score for a correct basepair matching.
+#' @param mismatch The penalty score for a basepair mismatching.
+#' @param gapopen The gap opening score for the alignment.
+#' @param gapextension The gap extension score for the alignment.
+#' @param n number of random permutation used for each percentage
+#' @param corrupted percentage The number of cores for the parallel processing
+#'
+#' @importFrom reticulate source_python
+#' @importFrom readr read_tsv
+#' @return It returns a data frame of the alignment result
+#' @export
+
+sequnce_alignment_threshold <- function(ref_file,
+                                        match=2,
+                                        mismatch=-2,
+                                        gapopen=-6,
+                                        gapextension=-0.1,
+                                        permutate_percent=c(0.1,0.2,0.3,0.4,0.5,0.6),
+                                        n=100,
+                                        output_file="alignment_threshold.txt") {
+
+    args <- list("reference"=get_abspath(ref_file),
+                 "output_file"=get_abspath(output_file),
+                 "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
+                 "gapextension"=gapextension,"n"=n,
+                 "permutate_percent"=permutate_percent)
+    source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
+    module <- reticulate::import_from_path("sequence_alignment_threshold", system.file("py", package = "TraceQC"))
+    module$alignment_score_threshold(args)
+    read_tsv(output_file)
+}
