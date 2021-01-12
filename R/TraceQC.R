@@ -122,9 +122,15 @@ create_TraceQC_object <-
                 regions=ref$regions,
                 qc=qc)
 
+    aligned_reads <- aligned_reads %>%
+      filter(score>alignment_score_cutoff) %>%
+      group_by(target_seq,target_ref) %>%
+      summarise(count=n(),score=max(score)) %>%
+      ungroup
+
     message("Running mutation event identification.")
     tic("mutation event identification")
-    obj$mutation <- seq_to_character(obj,
+    obj$mutation <- seq_to_character(aligned_reads,
                                      ncores,
                                      use_CPM,
                                      alignment_score_cutoff,

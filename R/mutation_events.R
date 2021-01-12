@@ -85,14 +85,6 @@ seq_to_character <- function(traceQC_input,
                              use_CPM,
                              alignment_score_cutoff = 0,
                              abundance_cutoff = 0) {
-  aligned_reads <- traceQC_input$aligned_reads
-
-  aligned_reads <- aligned_reads %>%
-    filter(score>alignment_score_cutoff) %>%
-    group_by(target_seq,target_ref) %>%
-    summarise(count=n(),score=max(score)) %>%
-    ungroup
-
   if(use_CPM) {
     aligned_reads$count <- aligned_reads$count * 1e6 / sum(aligned_reads$count)
     abundance_cutoff <- 1e6 * abundance_cutoff
