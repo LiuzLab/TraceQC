@@ -80,7 +80,7 @@ find_position <-
 #' }
 #' @export
 #'
-seq_to_character <- function(traceQC_input,
+seq_to_character <- function(aligned_reads,
                              ncores = 4,
                              use_CPM,
                              alignment_score_cutoff = 0,
