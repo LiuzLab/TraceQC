@@ -23,6 +23,7 @@ def get_alignment_result(param):
 
     data = {}
     data["name"] = s.name
+    data["description"] = s.description
     data["seq"] = align[1]
     data["ref"] = align[0]
     data["score"] = align[2]
