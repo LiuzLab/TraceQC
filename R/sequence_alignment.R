@@ -100,13 +100,14 @@ sequence_alignment_for_10x <- function(input_file,
                                mismatch=-2,
                                gapopen=-6,
                                gapextension=-0.1,
+                               penalize_end_gaps=0,
                                ncores = 4,
                                return_df = FALSE) {
   args <- list("input"=get_abspath(input_file),
                "reference"=get_abspath(ref_file),
                "output"=get_abspath(output_file),
                "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-               "gapextension"=gapextension,
+               "gapextension"=gapextension,"penalize_end_gaps"=penalize_end_gaps,
                "ncores"=ncores)
   source_python(system.file("py", "alignment_for_10x.py", package="TraceQC"))
   print(ls(parent.frame()))

@@ -16,6 +16,7 @@ def get_alignment_result(param):
                                 args["mismatch"],
                                 args["gapopen"],
                                 args["gapextension"],
+                                penalize_end_gaps=args["penalize_end_gaps"],
                                 one_alignment_only=True)[0]
 
     cs = np.cumsum([i!="-" for i in align[0]])
