@@ -17,22 +17,25 @@ def get_alignment_result(param):
                                 args["gapopen"],
                                 args["gapextension"],
                                 penalize_end_gaps=args["penalize_end_gaps"],
-                                one_alignment_only=True)[0]
+                                one_alignment_only=True)
 
-    cs = np.cumsum([i!="-" for i in align[0]])
+    if align:
+        align = align[0]
+        cs = np.cumsum([i!="-" for i in align[0]])
 
-    data = {}
-    data["name"] = s["qname"]
-    data["seq"] = align[1]
-    data["ref"] = align[0]
-    data["score"] = align[2]
-    target_start = min(np.argwhere(cs==target_start)[0])
-    target_end = min(np.argwhere(cs==target_end)[0])
-    data["target_ref"] = align[0][target_start:target_end]
-    data["target_seq"] = align[1][target_start:target_end]
-    data["CB"] = s["CB"]
-    data["UB"] = s["UB"]
-    return data
+        data = {}
+        data["name"] = s["qname"]
+        data["seq"] = align[1]
+        data["ref"] = align[0]
+        data["score"] = align[2]
+        target_start = min(np.argwhere(cs==target_start)[0])
+        target_end = min(np.argwhere(cs==target_end)[0])
+        data["target_ref"] = align[0][target_start:target_end]
+        data["target_seq"] = align[1][target_start:target_end]
+        data["CB"] = s["CB"]
+        data["UB"] = s["UB"]
+        return data
+    return
 
 def parse_10x_data(args):
     align_file = pysam.AlignmentFile(args["input"], "rb")
