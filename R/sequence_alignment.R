@@ -161,10 +161,10 @@ sequnce_alignment_threshold <- function(ref_file,
     args <- list("reference"=get_abspath(ref_file),
                  "output_file"=get_abspath(output_file),
                  "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-                 "penalize_end_gaps"=penalize_end_gaps,"read_length":read_length,
+                 "penalize_end_gaps"=penalize_end_gaps,"read_length"=read_length,
                  "gapextension"=gapextension,"n"=n,
                  "permutate_percent"=permutate_percent)
-    source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
+    # source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
     module <- reticulate::import_from_path("sequence_alignment_threshold", system.file("py", package = "TraceQC"))
     module$alignment_score_threshold(args)
     read_tsv(output_file)

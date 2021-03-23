@@ -17,9 +17,9 @@ def alignment_score_threshold(args):
         scores = []
         perms = []
         for _ in range(n):
-            if args["penalize_end_gaps"]:
-                idx = random.randint(0,len(ref_raw)-args["read_length"])
-                ref = ref_raw[idx:idx+args["read_length"]]
+            if int(args["penalize_end_gaps"]):
+                idx = random.randint(0,len(ref_raw)-int(args["read_length"]))
+                ref = ref_raw[idx:idx+int(args["read_length"])]
             else:
                 ref = ref_raw
             length = len(ref)
@@ -35,7 +35,7 @@ def alignment_score_threshold(args):
                                         args["mismatch"],
                                         args["gapopen"],
                                         args["gapextension"],
-                                        penalize_end_gaps=args["penalize_end_gaps"],
+                                        penalize_end_gaps=int(args["penalize_end_gaps"]),
                                         one_alignment_only=True)[0]
             scores.append(align[2])
         tmp = pd.DataFrame({"permutated_seq":perms,"score":scores,\

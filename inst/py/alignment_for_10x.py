@@ -16,7 +16,7 @@ def get_alignment_result(param):
                                 args["mismatch"],
                                 args["gapopen"],
                                 args["gapextension"],
-                                penalize_end_gaps=args["penalize_end_gaps"],
+                                penalize_end_gaps=int(args["penalize_end_gaps"]),
                                 one_alignment_only=True)
 
     if align:
