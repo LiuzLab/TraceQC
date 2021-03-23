@@ -71,7 +71,7 @@ def alignment(args):
     else:
         data = [ret for ret in \
             tqdm(get_alignment_result((s, ref, target_start, target_end, args)) \
-            for s in seqs) ]
-
+            for s in seqs)]
+    data = [d for d in data if d]
     result = pd.DataFrame(data=data)
     result.to_csv(args["output"],sep="\t",index=False)

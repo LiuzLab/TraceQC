@@ -152,6 +152,8 @@ sequnce_alignment_threshold <- function(ref_file,
                                         mismatch=-2,
                                         gapopen=-6,
                                         gapextension=-0.1,
+                                        penalize_end_gaps=0,
+                                        read_length=0,
                                         permutate_percent=c(0.1,0.2,0.3,0.4,0.5,0.6),
                                         n=100,
                                         output_file="alignment_threshold.txt") {
@@ -159,6 +161,7 @@ sequnce_alignment_threshold <- function(ref_file,
     args <- list("reference"=get_abspath(ref_file),
                  "output_file"=get_abspath(output_file),
                  "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
+                 "penalize_end_gaps"=penalize_end_gaps,"read_length":read_length,
                  "gapextension"=gapextension,"n"=n,
                  "permutate_percent"=permutate_percent)
     source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
