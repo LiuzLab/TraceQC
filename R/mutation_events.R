@@ -38,7 +38,7 @@ find_position <-
       mutate(target_seq = target_seq) %>%
       mutate(
         length = 1,
-        type = "mutation",
+        type = "substitution",
         mutate_to = substr(target_seq, start = .data$start, stop = .data$end)
       )
     return (
@@ -60,7 +60,6 @@ find_position <-
 #' Identifying mutation events.
 #'
 #' @param traceQC_input A TraceQC object.
-#' @param ncores The number of cores for parallelization.
 #' @param use_CPM Use count per million
 #' @param alignment_score_cutoff Minimum cutoff for alignment score
 #' @param abundance_cutoff Minimum cutoff for read count. This parameter are used with use_CPM.
@@ -81,7 +80,6 @@ find_position <-
 #' @export
 #'
 seq_to_character <- function(aligned_reads,
-                             ncores = 4,
                              use_CPM,
                              alignment_score_cutoff = 0,
                              abundance_cutoff = 0) {
@@ -111,31 +109,16 @@ seq_to_character <- function(aligned_reads,
 
   mutation_df <- NULL
 
-  if(ncores==1) {
-    mutation_df <- mapply(
-      find_position,
-      all_insertions,
-      all_deletions,
-      all_mutations,
-      target_seqs,
-      scores,
-      read_counts,
-      SIMPLIFY = FALSE
-    ) %>% bind_rows()
-  }
-  else {
-    mutation_df <- mcmapply(
-      find_position,
-      all_insertions,
-      all_deletions,
-      all_mutations,
-      target_seqs,
-      scores,
-      read_counts,
-      SIMPLIFY = FALSE,
-      mc.cores = ncores
-    ) %>% bind_rows()
-  }
+  mutation_df <- mapply(
+    find_position,
+    all_insertions,
+    all_deletions,
+    all_mutations,
+    target_seqs,
+    scores,
+    read_counts,
+    SIMPLIFY = FALSE
+  ) %>% bind_rows()
 
   if (nrow(unmutated)>0) {
   mutation_df <- rbind(

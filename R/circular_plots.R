@@ -253,7 +253,7 @@ plot_insertion_hotspot <-
 #' plot_point_mutation_hotspot(example_obj)
 #'
 plot_point_mutation_hotspot <- function(traceQC_input) {
-  mutations <- traceQC_input$mutation %>% filter(.data$type == "mutation") %>%
+  mutations <- traceQC_input$mutation %>% filter(.data$type == "substitution") %>%
     group_by(.data$start, .data$length, .data$mutate_to) %>%
     summarise(count = sum(.data$count)) %>%
     ungroup %>%
@@ -262,6 +262,6 @@ plot_point_mutation_hotspot <- function(traceQC_input) {
     arrange(.data$count) %>%
     mutate(y = cumsum(.data$count)) %>%
     ungroup
-  circular_histogram(mutations, "Mutations", traceQC_input)
+  circular_histogram(mutations, "Substitutions", traceQC_input)
 }
 
