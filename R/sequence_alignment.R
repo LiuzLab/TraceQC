@@ -147,15 +147,16 @@ sequence_alignment_for_10x <- function(input_file,
 #' @return It returns a data frame of the alignment result
 #' @export
 
-sequnce_alignment_threshold <- function(ref_file,
+sequence_permutation <- function(ref_file,
                                         match=2,
                                         mismatch=-2,
                                         gapopen=-6,
                                         gapextension=-0.1,
                                         penalize_end_gaps=1,
                                         read_length=0,
-                                        permutate_percent=c(0.1,0.2,0.3,0.4,0.5,0.6),
-                                        n=100,
+                                        # permutate_percent=c(0.1,0.2,0.3,0.4,0.5,0.6),
+                                        permutate_percent=seq(0,1,length.out=101),
+                                        n=2,
                                         output_file="alignment_threshold.txt") {
 
     args <- list("reference"=get_abspath(ref_file),
@@ -167,5 +168,27 @@ sequnce_alignment_threshold <- function(ref_file,
     # source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
     module <- reticulate::import_from_path("sequence_alignment_threshold", system.file("py", package = "TraceQC"))
     module$alignment_score_threshold(args)
-    read_tsv(output_file)
+    read_tsv(output_file)}
+
+
+#' Parsing reference sequence file
+#' @param ref_file A path of a reference sequence file.
+#' @return A list with those four elements.
+#' \itemize{
+#'   \item `refseq': The reference sequence.
+#'   \item `regions': Detailed information about the reference sequence.
+#' }
+#' @export
+#'
+parse_ref_file <- function(ref_file) {
+  ref <- readLines(ref_file)
+  refseq <- ref[1]
+  regions <- strsplit(ref[2:length(ref)],split=" ")
+  regions <- do.call(rbind,regions) %>%
+    as.data.frame() %>%
+    setNames(c("region","start","end")) %>%
+    mutate(start=strtoi(.data$start),
+           end=strtoi(.data$end)) %>%
+    mutate(region=as.character(.data$region))
+  list(refseq=refseq,regions=regions)
 }

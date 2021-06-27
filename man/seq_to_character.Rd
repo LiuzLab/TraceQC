@@ -6,15 +6,12 @@
 \usage{
 seq_to_character(
   aligned_reads,
-  ncores = 4,
   use_CPM,
   alignment_score_cutoff = 0,
   abundance_cutoff = 0
 )
 }
 \arguments{
-\item{ncores}{The number of cores for parallelization.}
-
 \item{use_CPM}{Use count per million}
 
 \item{alignment_score_cutoff}{Minimum cutoff for alignment score}
