@@ -30,8 +30,8 @@ def get_alignment_result(param):
         data["score"] = align[2]
         target_start = min(np.argwhere(cs==target_start)[0])
         target_end = min(np.argwhere(cs==target_end)[0])
-        data["target_ref"] = align[0][target_start:target_end]
-        data["target_seq"] = align[1][target_start:target_end]
+        data["target_ref"] = align[0][target_start:target_end+1]
+        data["target_seq"] = align[1][target_start:target_end+1]
         data["CB"] = s["CB"]
         data["UB"] = s["UB"]
         return data

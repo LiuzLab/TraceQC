@@ -18,10 +18,10 @@ def alignment_score_threshold(args):
         perms = []
         for _ in range(n):
             if int(args["penalize_end_gaps"]):
+                ref = ref_raw
+            else:
                 idx = random.randint(0,len(ref_raw)-int(args["read_length"]))
                 ref = ref_raw[idx:idx+int(args["read_length"])]
-            else:
-                ref = ref_raw
             length = len(ref)
             perm_id = random.sample(range(length),k=int(length * per))
             perm = [i for i in ref]
