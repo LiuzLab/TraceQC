@@ -6,38 +6,25 @@ Date: 2020-06-18
 Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "ctb", "cph"), email = "jingyuan.hu@bcm.edu"),
   person(given = "Hyun-Hwan", family = "Jeong", role = c("aut", "cre", "ctb"), email = "hyun-hwan.jeong@bcm.edu"),
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"))
-Maintainer: Hyun-Hwan Jeong <hyun-hwan.jeong@bcm.edu> 
 Description: Provides a generalized quantify control functions and data processing pipeline across several CRISPR-based lineage tracing platforms that can be directly used in data analysis.
 Depends: R (>= 3.5.0)
 Imports:
   circlize,
   tidyr,
   RColorBrewer,
-  ComplexHeatmap,
   ggplot2,
   readr,
   DECIPHER,
   fastqcr,
-  reticulate,
   tictoc,
   magrittr,
   dplyr,
   stringr,
   grid,
   rmarkdown,
-  kableExtra,
-  treeio,
-  tidytree,
-  ggtree,
-  phangorn,
   tibble,
   ape
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-VignetteBuilder: knitr
-Suggests: 
-    knitr,
-    cowplot,
-    testthat
 RoxygenNote: 7.1.1
