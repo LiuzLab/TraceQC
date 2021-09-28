@@ -14,4 +14,4 @@ pip install biopython pandas tqdm
 ```
 
 ## Tutorial
-The tutorial of TraceQC is [here](https://github.com/LiuzLab/TraceQC/wiki).
+The tutorial of TraceQC is [here](https://liuzlab.github.io/TraceQC/).
