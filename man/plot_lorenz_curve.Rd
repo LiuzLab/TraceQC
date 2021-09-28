@@ -4,10 +4,10 @@
 \alias{plot_lorenz_curve}
 \title{Drawing Lorenz Curve}
 \usage{
-plot_lorenz_curve(traceQC_input)
+plot_lorenz_curve(aligned_reads)
 }
 \arguments{
-\item{traceQC_input}{A TraceQC object}
+\item{aligned_reads}{A aligned_reads dataframe.}
 }
 \value{
 A ggplot2 object that shows Lorenz Curve

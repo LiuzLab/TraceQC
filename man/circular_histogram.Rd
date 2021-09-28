@@ -4,14 +4,14 @@
 \alias{circular_histogram}
 \title{Display a circos plot with a histgoram for a given data frame.}
 \usage{
-circular_histogram(df, title, traceQC_input)
+circular_histogram(df, title, ref)
 }
 \arguments{
 \item{df}{a data frame that contains data to be visualized on the plot.}
 
 \item{title}{The main title of the plot.}
 
-\item{traceQC_input}{A traceQC object}
+\item{ref}{A traceQC object}
 }
 \value{
 It doesn't generate any specific output.

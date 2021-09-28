@@ -4,16 +4,16 @@
 \alias{circular_chordgram}
 \title{Display a circos plot with links for a given data frame.}
 \usage{
-circular_chordgram(df, title, traceQC_input, count_cutoff = 1)
+circular_chordgram(df, title, ref, use_log_count = TRUE, count_cutoff = 1)
 }
 \arguments{
 \item{df}{a data frame that contains data to be visualized on the plot}
 
 \item{title}{The main title of the plot}
 
-\item{traceQC_input}{A TraceQC object}
-
 \item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
+
+\item{traceQC_input}{A TraceQC object}
 }
 \value{
 It doesn't generate any specific output.

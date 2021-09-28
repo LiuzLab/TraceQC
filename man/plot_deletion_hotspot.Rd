@@ -4,10 +4,12 @@
 \alias{plot_deletion_hotspot}
 \title{Display a circos plot that shows overall deletion pattern across the barcodes.}
 \usage{
-plot_deletion_hotspot(traceQC_input, count_cutoff = 1)
+plot_deletion_hotspot(mutations, ref, use_log_count = TRUE, count_cutoff = 1)
 }
 \arguments{
-\item{traceQC_input}{A TraceQC object}
+\item{mutations}{A mutations dataframe.}
+
+\item{ref}{A reference object.}
 
 \item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
 }

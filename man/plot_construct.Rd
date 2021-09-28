@@ -4,20 +4,14 @@
 \alias{plot_construct}
 \title{Visualization of the construct (reference sequence) information.}
 \usage{
-plot_construct(traceQC_input)
+plot_construct(ref, chr_per_row = 50, chr_size = 10)
 }
 \arguments{
-\item{traceQC_input}{an TraceQC object}
+\item{ref}{an reference object, output of `parse_ref_file`}
 }
 \value{
 it returns A ggplot2 object that shows the construct information.
 }
 \description{
 Visualization of the construct (reference sequence) information.
-}
-\examples{
-library(TraceQC)
-data(example_obj)
-plot_construct(example_obj)
-
 }

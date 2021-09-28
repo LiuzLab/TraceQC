@@ -4,10 +4,10 @@
 \alias{num_mutation_histogram}
 \title{A barplot to show distribution of the number of mutations per barcode}
 \usage{
-num_mutation_histogram(traceQC_input)
+num_mutation_histogram(mutations)
 }
 \arguments{
-\item{traceQC_input}{A TraceQC object}
+\item{mutations}{A mutation dataframe}
 }
 \value{
 A ggplot2 object that shows the barplot

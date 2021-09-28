@@ -4,10 +4,10 @@
 \alias{plot_score_distribution}
 \title{Drawing a score distribution plot}
 \usage{
-plot_score_distribution(traceQC_input)
+plot_score_distribution(aligned_reads)
 }
 \arguments{
-\item{traceQC_input}{A TraceQC object}
+\item{aligned_reads}{A aligned_reads dataframe.}
 }
 \value{
 A ggplot2 object that shows alignment score distribution.

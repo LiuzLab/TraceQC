@@ -12,9 +12,8 @@ sequence_alignment_for_10x(
   mismatch = -2,
   gapopen = -6,
   gapextension = -0.1,
-  penalize_end_gaps = 0,
-  ncores = 4,
-  return_df = FALSE
+  penalize_end_gaps = 1,
+  ncores = 4
 )
 }
 \arguments{

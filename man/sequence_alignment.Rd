@@ -13,6 +13,7 @@ sequence_alignment(
   gapopen = -6,
   gapextension = -0.1,
   ncores = 4,
+  penalize_end_gaps = 1,
   return_df = FALSE
 )
 }
