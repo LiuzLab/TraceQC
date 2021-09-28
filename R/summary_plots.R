@@ -1,8 +1,6 @@
-
-
 #' Visualization of the construct (reference sequence) information.
 #'
-#' @param traceQC_input an TraceQC object
+#' @param ref an reference object, output of `parse_ref_file`
 #'
 #' @importFrom RColorBrewer brewer.pal
 #' @import ggplot2
@@ -10,27 +8,22 @@
 #' @return it returns A ggplot2 object that shows the construct information.
 #' @export
 #'
-#' @examples
-#' library(TraceQC)
-#' data(example_obj)
-#' plot_construct(example_obj)
-#'
-plot_construct <- function(traceQC_input) {
-  colors <- brewer.pal(length(unique(traceQC_input$regions$region)) + 1, "Set2")
+plot_construct <- function(ref,chr_per_row=50,chr_size=10) {
+  colors <- brewer.pal(length(unique(ref$regions$region)) + 1, "Set2")
   p <- data.frame(
-    text = unlist(strsplit(traceQC_input$refseq, "")),
-    pos = 1:nchar(traceQC_input$refseq),
-    x = (1:nchar(traceQC_input$refseq) - 1) %% 50,
+    text = unlist(strsplit(ref$refseq, "")),
+    pos = 1:nchar(ref$refseq),
+    x = (1:nchar(ref$refseq) - 1) %% chr_per_row,
     y = -((1:nchar(
-      traceQC_input$refseq
-    ) - 1) %/% 50)
+      ref$refseq
+    ) - 1) %/% chr_per_row)
   )
   p$region <- "adapter"
-  for (i in 1:nrow(traceQC_input$regions)) {
-    from <- traceQC_input$regions[i, "start"]
-    to <- traceQC_input$regions[i, "end"]
+  for (i in 1:nrow(ref$regions)) {
+    from <- ref$regions[i, "start"]
+    to <- ref$regions[i, "end"]
     p$region[from:to] <-
-      traceQC_input$regions[i, "region"]
+      ref$regions[i, "region"]
   }
 
   ggplot(p) +
@@ -39,16 +32,32 @@ plot_construct <- function(traceQC_input) {
       y = "y",
       label = "text",
       color = "region"
-    )) +
+    ),size=chr_size) +
     scale_color_manual(values = colors,
-                       breaks = c(unique(traceQC_input$regions$region), "adapter")) +
-    coord_fixed(ratio = nchar(traceQC_input$refseq) %/% 50, clip="off") +
+                       breaks = c(unique(ref$regions$region), "adapter")) +
+    coord_fixed(ratio = nchar(ref$refseq) %/% chr_per_row, clip="off") +
     theme_void()
 }
 
+#' Visualization of alignment permutation.
+#'
+#' @param ref an data frame of permutation sequence, output of `sequence_permutation`
+#'
+#' @import ggplot2
+#'
+#' @return it returns A ggplot2 object that shows the permutation.
+#' @export
+#'
+plot_alignment_permutation <-  function(alignment_permutation) {
+    model <- loess(score~permutate_percent,data=alignment_permutation)
+    ggplot(alignment_permutation,aes(x=permutate_percent,y=score)) +
+      geom_point() +
+      geom_smooth(formula=y~x,method="loess",sd=TRUE) +
+      theme_classic()}
+
 #' Drawing a score distribution plot
 #'
-#' @param traceQC_input A TraceQC object
+#' @param aligned_reads A aligned_reads dataframe.
 #'
 #' @import ggplot2
 #'
@@ -59,8 +68,8 @@ plot_construct <- function(traceQC_input) {
 #' data(example_obj)
 #' plot_score_distribution(example_obj)
 #'
-plot_score_distribution <- function(traceQC_input) {
-  ggplot(traceQC_input$aligned_reads) +
+plot_score_distribution <- function(aligned_reads) {
+  ggplot(aligned_reads) +
     geom_histogram(aes_string(x = "score", y = "..density.."), binwidth = 5) +
     ylab("percentage") +
     theme_classic()
@@ -70,7 +79,7 @@ plot_score_distribution <- function(traceQC_input) {
 #'
 #' The Lorenz curve shows an inequality of barcode distribution of the sample.
 #'
-#' @param traceQC_input A TraceQC object
+#' @param aligned_reads A aligned_reads dataframe.
 #'
 #' @import ggplot2
 #'
@@ -81,8 +90,8 @@ plot_score_distribution <- function(traceQC_input) {
 #' data(example_obj)
 #' plot_lorenz_curve(example_obj)
 #'
-plot_lorenz_curve <- function(traceQC_input) {
-  p <- traceQC_input$aligned_reads %>%
+plot_lorenz_curve <- function(aligned_reads) {
+  p <- aligned_reads %>%
     group_by(.data$target_seq) %>%
     summarise(count = n()) %>%
     ungroup %>%
@@ -109,7 +118,7 @@ plot_lorenz_curve <- function(traceQC_input) {
 
 #' A barplot to show distribution of the number of mutations per barcode
 #'
-#' @param traceQC_input A TraceQC object
+#' @param mutations A mutation dataframe
 #'
 #' @import ggplot2
 #' @importFrom magrittr %>%
@@ -122,8 +131,8 @@ plot_lorenz_curve <- function(traceQC_input) {
 #' data(example_obj)
 #' num_mutation_histogram(example_obj)
 #'
-num_mutation_histogram <- function(traceQC_input) {
-  p <- traceQC_input$mutation %>%
+num_mutation_histogram <- function(mutations) {
+  p <- mutations %>%
     group_by(.data$target_seq) %>%
     summarise(num_mutation = n()) %>%
     ungroup %>%
@@ -141,7 +150,7 @@ num_mutation_histogram <- function(traceQC_input) {
 
 #' A pie chart that shows a summary of mutation types.
 #'
-#' @param traceQC_input A TraceQC object
+#' @param mutations A mutation dataframe
 #'
 #' @import ggplot2
 #' @importFrom magrittr %>%
@@ -154,31 +163,23 @@ num_mutation_histogram <- function(traceQC_input) {
 #' data(example_obj)
 #' mutation_type(example_obj)
 #'
-mutation_type <- function(traceQC_input) {
-  breaks <- c(1, 2, 4, 8, 16)
-
-  df <- traceQC_input$mutation %>%
+mutation_type_donut <- function(mutations) {
+  plotting_df <- mutations %>%
     filter(.data$type != "unmutated") %>%
     group_by(.data$type, .data$start, .data$length, .data$mutate_to) %>%
-    summarise(count = n()) %>%
+    summarise() %>%
     ungroup %>%
-    mutate(length_category = findInterval(.data$length, breaks)) %>%
-    group_by(.data$type, .data$length_category) %>%
-    summarise(count = n()) %>%
+    group_by(.data$type) %>%
+    summarise(count=n()) %>%
     ungroup %>%
-    arrange(.data$type, .data$length_category) %>%
-    mutate(ymax = cumsum(.data$count) / sum(.data$count),
-           labels = breaks[2:length(breaks)][length_category])
-
-  plotting_df <- df %>%  group_by(.data$type) %>%
-    summarise(ymax = max(.data$ymax), count = sum(.data$count)) %>%
-    ungroup
-
+    arrange(.data$type) %>%
+    mutate(ymax = cumsum(.data$count) / sum(.data$count))
+  
   plotting_df$ymin <- c(0, plotting_df$ymax[1:2])
   plotting_df$labelPosition = (plotting_df$ymax + plotting_df$ymin) / 2
   plotting_df$label <-
     paste0(plotting_df$type, "\n value: ", plotting_df$count)
-
+  
   p <-
     ggplot(plotting_df,
            aes_string(
@@ -195,20 +196,15 @@ mutation_type <- function(traceQC_input) {
     scale_fill_brewer(palette = 4) +
     coord_polar(theta = "y") +
     xlim(c(2, 4)) +
-    scale_y_continuous(
-      breaks = df %>% filter(.data$type != "mutation") %>% pull(.data$ymax),
-      labels = df %>% filter(.data$type != "mutation") %>% pull(.data$labels)
-    ) +
     theme(
       legend.position = "none",
       axis.ticks.y = element_blank(),
       axis.text.y = element_blank(),
       panel.grid.minor = element_blank(),
       panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_line(color = "grey"),
+      panel.grid.major.y = element_blank(),
       panel.background = element_rect(fill = "transparent", colour = NA),
       axis.title = element_blank(),
-      axis.text.x = element_text(face = "bold", size = 12)
+      axis.text.x = element_blank(),
     )
-  return(p)
-}
+  return(p)}

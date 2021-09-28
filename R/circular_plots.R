@@ -20,16 +20,16 @@ library(ggplot2)
 #' @return It doesn't generate any specific output.
 #'
 circular_chordgram <-
-  function(df, title, traceQC_input, count_cutoff = 1) {
-    regions <- traceQC_input$regions
+  function(df, title, ref, use_log_count=TRUE, count_cutoff = 1) {
+    regions <- ref$regions
     target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
     target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
     refseq <-
-      substr(traceQC_input$refseq, start = target_start, stop = target_end)
+      substr(ref$refseq, start = target_start, stop = target_end)
 
     col_fun <- colorRamp2(c(0,
-                            ceiling(max(df$log10_count))), c("yellow", "red"))
-    df$color <- col_fun(df$log10_count)
+                            ceiling(max(df$count))), c("yellow", "red"))
+    df$color <- col_fun(df$count)
     l <- nchar(refseq)+1
 
     circos.par(start.degree = 90)
@@ -37,19 +37,32 @@ circular_chordgram <-
     circos.track(track.height = 0.1, ylim = c(0, 1))
     circos.axis(major.at = seq(0, l, 10), labels = seq(0, l, 10))
     df <-
-      df %>% arrange(by = .data$log10_count) %>% filter(.data$log10_count >= count_cutoff)
-    max_cnt <- ceiling(max(df$log10_count))
-    for (i in 1:nrow(df)) {
-      circos.link(
-        1,
-        df$start[i],
-        1,
-        df$end[i],
-        h.ratio = 0.9,
-        lwd = df$log10_count[i] / 2,
-        col = alpha(df$color[i], df$log10_count[i] / max_cnt)
-      )
-    }
+      df %>% arrange(by = .data$count) %>% filter(.data$count >= count_cutoff)
+    max_cnt <- ceiling(max(df$count))
+    
+    if (use_log_count) {
+      for (i in 1:nrow(df)) {
+        circos.link(
+          1,
+          df$start[i],
+          1,
+          df$end[i],
+          h.ratio = 0.9,
+          lwd = df$count[i] / 2,
+          col = alpha(df$color[i], df$count[i] / max_cnt)
+        )
+      }} else {
+      for (i in 1:nrow(df)) {
+        circos.link(
+          1,
+          df$start[i],
+          1,
+          df$end[i],
+          h.ratio = 0.9,
+          lwd = 1,
+          col = df$color[i]
+        )
+      }}
 
     region_names <- unique(regions$region)
     colors <- brewer.pal(length(region_names) + 1, "Set2")
@@ -71,17 +84,17 @@ circular_chordgram <-
     circos.clear()
     lgd <-
       Legend(
-        at = seq(floor(min(df$log10_count)), ceiling(max(df$log10_count)),
+        at = seq(floor(min(df$count)), ceiling(max(df$count)),
                  length.out = 5),
         col_fun = col_fun,
-        title = "log 10 count"
+        title = "count"
       )
     draw(lgd, x = unit(0.15, "npc"), y = unit(0.15, "npc"))
   }
 
 #' Display a circos plot with a histgoram for a given data frame.
 #'
-#' @param traceQC_input A traceQC object
+#' @param ref A traceQC object
 #' @param title The main title of the plot.
 #' @param df a data frame that contains data to be visualized on the plot.
 #'
@@ -93,12 +106,12 @@ circular_chordgram <-
 #'
 #' @return It doesn't generate any specific output.
 #'
-circular_histogram <- function(df, title, traceQC_input) {
-  regions <- traceQC_input$regions
+circular_histogram <- function(df, title, ref) {
+  regions <- ref$regions
   target_start <- regions %>% filter(.data$region == "target") %>% pull(.data$start)
   target_end <- regions %>% filter(.data$region == "target") %>% pull(.data$end)
   refseq <-
-    substr(traceQC_input$refseq, start = target_start, stop = target_end)
+    substr(ref$refseq, start = target_start, stop = target_end)
 
   scale <- df %>%
     group_by(.data$start) %>%
@@ -171,7 +184,8 @@ circular_histogram <- function(df, title, traceQC_input) {
 
 #' Display a circos plot that shows overall deletion pattern across the barcodes.
 #'
-#' @param traceQC_input A TraceQC object
+#' @param mutations A mutations dataframe.
+#' @param ref A reference object.
 #' @param count_cutoff A cutoff to remove link whose log10-count are less than the value.
 #'
 #' @importFrom magrittr %>%
@@ -186,8 +200,8 @@ circular_histogram <- function(df, title, traceQC_input) {
 #' data(example_obj)
 #' plot_deletion_hotspot(example_obj)
 #'
-plot_deletion_hotspot <- function(traceQC_input, count_cutoff = 1) {
-  deletions <- traceQC_input$mutation %>%
+plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cutoff = 1) {
+  deletions <- mutations %>%
     filter(.data$type == "deletion") %>%
     group_by(.data$start, .data$length) %>%
     summarise(count = sum(.data$count)) %>%
@@ -195,16 +209,22 @@ plot_deletion_hotspot <- function(traceQC_input, count_cutoff = 1) {
     ungroup %>%
     mutate(id = 1:n()) %>%
     mutate(log10_count = log10(.data$count))
-
+  
+  if (use_log_count) {
+    deletions$count = log10(deletions$count)
+  }
+  
   circular_chordgram(df = deletions,
                      title = "Deletions",
-                     traceQC_input,
+                     ref,
+                     use_log_count = use_log_count,
                      count_cutoff)
 }
 
 #' Display a circos plot that shows overall insertion pattern across the barcodes.
 #'
-#' @param traceQC_input A TraceQC object
+#' @param mutations A mutations dataframe.
+#' @param ref A reference object.
 #' @param count_cutoff A cutoff to remove link whose log10-count are less than the value.
 #'
 #' @importFrom magrittr %>%
@@ -219,19 +239,22 @@ plot_deletion_hotspot <- function(traceQC_input, count_cutoff = 1) {
 #' plot_insertion_hotspot(example_obj)
 #'
 plot_insertion_hotspot <-
-  function(traceQC_input, count_cutoff = 1) {
-    insertions <- traceQC_input$mutation %>%
+  function(mutations, ref, use_log_count=TRUE, count_cutoff = 1) {
+    insertions <- mutations %>%
       filter(.data$type == "insertion") %>%
       group_by(.data$start, .data$length) %>%
       summarise(count = sum(.data$count)) %>%
       mutate(end = .data$start + .data$length) %>%
       ungroup %>%
-      mutate(id = 1:n()) %>%
-      mutate(log10_count = log10(.data$count))
+      mutate(id = 1:n())
+    if (use_log_count) {
+      insertions$count = log10(insertions$count)
+    }
 
     circular_chordgram(df = insertions,
                        title = "Insertions",
-                       traceQC_input,
+                       ref,
+                       use_log_count = use_log_count,
                        count_cutoff)
   }
 
@@ -239,10 +262,12 @@ plot_insertion_hotspot <-
 #'
 #' The circos plot shows the frequency of mutation events for each nucleotide.
 #'
-#' @param traceQC_input A traceQC object
+#' @param mutations A mutations dataframe
+#' @param ref A reference object
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
+#' @importFrom purrr map_chr
 #'
 #' @return It won't return any specific object.
 #'
@@ -252,8 +277,8 @@ plot_insertion_hotspot <-
 #' data(example_obj)
 #' plot_point_mutation_hotspot(example_obj)
 #'
-plot_point_mutation_hotspot <- function(traceQC_input) {
-  mutations <- traceQC_input$mutation %>% filter(.data$type == "substitution") %>%
+plot_point_substitution_hotspot <- function(mutations,ref) {
+  substitutions <- mutations %>% filter(.data$type == "substitution") %>%
     group_by(.data$start, .data$length, .data$mutate_to) %>%
     summarise(count = sum(.data$count)) %>%
     ungroup %>%
@@ -262,6 +287,6 @@ plot_point_mutation_hotspot <- function(traceQC_input) {
     arrange(.data$count) %>%
     mutate(y = cumsum(.data$count)) %>%
     ungroup
-  circular_histogram(mutations, "Substitutions", traceQC_input)
+  circular_histogram(substitutions, "Substitutions", ref)
 }
 

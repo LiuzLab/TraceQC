@@ -27,21 +27,3 @@ seq_split <- function(s, len = 50) {
   str_replace_all(paste0(str_sub(s, st, ed-1), collapse = "<br/>"), "-", "_")
 }
 
-
-#' Installation necessary external software for TraceQC
-#'
-#' @export
-#'
-#' @importFrom fastqcr fastqc_install
-#' @importFrom reticulate py_install
-#'
-#' @examples
-#' \dontrun{
-#' library(TraceQC)
-#' install_external_packages()
-#' }
-install_external_packages <- function() {
-  fastqc_install()
-  py_install(packages = c("pandas", "biopython", "tqdm"))
-  message("All external packages has been installed.")
-}

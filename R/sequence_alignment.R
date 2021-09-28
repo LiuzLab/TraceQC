@@ -15,9 +15,7 @@
 #' be created from the function.
 #' @param ncores The number of cores for the parallel processing
 #'
-#' @importFrom reticulate source_python
 #' @importFrom readr read_tsv
-#' @importFrom tictoc tic toc
 #' @return It returns a data frame of the alignment result
 #' if `return_df' is `T' and `NULL' otherwise.
 #' @export
@@ -43,30 +41,11 @@ sequence_alignment <- function(input_file,
                                gapopen=-6,
                                gapextension=-0.1,
                                ncores = 4,
+                               penalize_end_gaps=1,
                                return_df = FALSE) {
-  args <- list("input"=get_abspath(input_file),
-               "reference"=get_abspath(ref_file),
-               "output"=get_abspath(output_file),
-               "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-               "gapextension"=gapextension,
-               "ncores"=ncores)
-  source_python(system.file("py", "alignment.py", package="TraceQC"))
-  print(ls(parent.frame()))
-  module <- reticulate::import_from_path("alignment", system.file("py", package = "TraceQC"))
-
-
-  tic("Alignment")
-  message(paste0("Running an alignment between ", ref_file,
-                 " and ", input_file, "."))
-  module$alignment(args)
-  toc()
-
-  if(return_df) {
-    read_tsv(output_file)
-  } else {
-    return(NULL)
-  }
-}
+  path <- system.file("py", "alignment.py", package="TraceQC")
+  system(sprintf("python3 %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s",
+                 path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension))}
 
 #' Function for a sequence alignment between the reference file and sample for 10x data.
 #'
@@ -85,47 +64,25 @@ sequence_alignment <- function(input_file,
 #' be created from the function.
 #' @param ncores The number of cores for the parallel processing
 #'
-#' @importFrom reticulate source_python
 #' @importFrom readr read_tsv
-#' @importFrom tictoc tic toc
 #' @return It returns a data frame of the alignment result
 #' if `return_df' is `T' and `NULL' otherwise.
 #' @export
 #'
 #' @examples
+
 sequence_alignment_for_10x <- function(input_file,
-                               ref_file,
-                               output_file="aligned_reads.txt",
-                               match=2,
-                               mismatch=-2,
-                               gapopen=-6,
-                               gapextension=-0.1,
-                               penalize_end_gaps=0,
-                               ncores = 4,
-                               return_df = FALSE) {
-  args <- list("input"=get_abspath(input_file),
-               "reference"=get_abspath(ref_file),
-               "output"=get_abspath(output_file),
-               "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-               "gapextension"=gapextension,"penalize_end_gaps"=penalize_end_gaps,
-               "ncores"=ncores)
-  source_python(system.file("py", "alignment_for_10x.py", package="TraceQC"))
-  print(ls(parent.frame()))
-  module <- reticulate::import_from_path("alignment_for_10x", system.file("py", package = "TraceQC"))
-
-
-  tic("Alignment")
-  message(paste0("Running an alignment between ", ref_file,
-                 " and ", input_file, "."))
-  module$alignment(args)
-  toc()
-
-  if(return_df) {
-    read_tsv(output_file)
-  } else {
-    return(NULL)
-  }
-}
+                                       ref_file,
+                                       output_file="aligned_reads.txt",
+                                       match=2,
+                                       mismatch=-2,
+                                       gapopen=-6,
+                                       gapextension=-0.1,
+                                       penalize_end_gaps=1,
+                                       ncores = 4) {
+  path <- system.file("py", "alignment_for_10x.py", package="TraceQC")
+  system(sprintf("python3 %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
+         path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))}
 
 #' Function for finding threshold of sequence alignment. The function randomly
 #' permutate certain percentage reference sequence and perform global alignment
@@ -142,7 +99,6 @@ sequence_alignment_for_10x <- function(input_file,
 #' @param n number of random permutation used for each percentage
 #' @param corrupted percentage The number of cores for the parallel processing
 #'
-#' @importFrom reticulate source_python
 #' @importFrom readr read_tsv
 #' @return It returns a data frame of the alignment result
 #' @export
@@ -154,21 +110,15 @@ sequence_permutation <- function(ref_file,
                                         gapextension=-0.1,
                                         penalize_end_gaps=1,
                                         read_length=0,
-                                        # permutate_percent=c(0.1,0.2,0.3,0.4,0.5,0.6),
                                         permutate_percent=seq(0,1,length.out=101),
                                         n=2,
                                         output_file="alignment_threshold.txt") {
-
-    args <- list("reference"=get_abspath(ref_file),
-                 "output_file"=get_abspath(output_file),
-                 "match"=match,"mismatch"=mismatch,"gapopen"=gapopen,
-                 "penalize_end_gaps"=penalize_end_gaps,"read_length"=read_length,
-                 "gapextension"=gapextension,"n"=n,
-                 "permutate_percent"=permutate_percent)
-    # source_python(system.file("py", "sequence_alignment_threshold.py", package="TraceQC"))
-    module <- reticulate::import_from_path("sequence_alignment_threshold", system.file("py", package = "TraceQC"))
-    module$alignment_score_threshold(args)
-    read_tsv(output_file)}
+  permutate_file <- tempfile()
+  write(paste(permutate_percent,collapse=" "), file=permutate_file)
+  path <- system.file("py", "sequence_alignment_threshold.py", package="TraceQC")
+  system(sprintf("python3 %s --ref %s --n %s --permutate_percent %s --read_length %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
+                 path,ref_file,n,permutate_file,read_length,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))
+  file.remove(permutate_file)}
 
 
 #' Parsing reference sequence file

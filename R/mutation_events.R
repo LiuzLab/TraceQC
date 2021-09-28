@@ -137,3 +137,34 @@ seq_to_character <- function(aligned_reads,
   return(mutation_df)
 }
 
+
+#' format a mutation data frame for output.
+#' 
+#' @param mutations A data frame of mutations. The output of seq_to_character.
+#' 
+#' @importFrom tidyr nest
+#' @importFrom purrr map_chr
+#' @importFrom purrr map_dbl
+#' @return A formatted data frame of mutations.
+#' @export
+#'
+format_mutation_df <- function(mutation_df, is_singlecell) {
+  if (is_singlecell) {
+    out_df <- mutate(mutation_df,cigar=paste(type,start,length,mutate_to,sep="_")) %>%
+      group_by(CB) %>%
+      nest() %>%
+      mutate(mutation=map_chr(data,function(x) {paste(unique(x$cigar),collapse=",")})) %>%
+      select(-data) %>%
+      ungroup
+  } else {
+    out_df <- mutate(mutation_df,cigar=paste(type,start,length,mutate_to,sep="_")) %>%
+      group_by(target_seq) %>%
+      nest() %>%
+      mutate(mutation=map_chr(data,function(x) {paste(x$cigar,collapse=",")})) %>%
+      mutate(count=map_dbl(data,function(x) {mean(x$count)})) %>%
+      select(-data) %>%
+      ungroup
+  }
+  return(out_df)
+}
+
