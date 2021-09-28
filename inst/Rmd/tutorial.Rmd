@@ -1,0 +1,80 @@
+---
+title: "TraceQC tutorial"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+### Visualize the annotated reference file
+```{r ref, out.height=400}
+library(TraceQC)
+ref_file <- system.file("extdata/test_data/ref","ref.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+plot_construct(ref,chr_per_row=50,chr_size=5)
+```
+
+### Sequence alignment
+```{r align}
+input_file <- system.file("extdata/test_data/fastq","example.fastq.gz",package="TraceQC")
+output_file <- "./aligned_reads.txt"
+sequence_alignment(input_file=input_file,ref_file=ref_file,
+                   output_file=output_file)
+```
+
+### Find optimal mutation cutoff using permutation
+```{r align_score}
+library(readr)
+library(ggplot2)
+library(dplyr)
+
+sequence_permutation(ref_file,out="./seq_permutate.txt")
+seq_permutate <- read_tsv("./seq_permutate.txt")
+model <- loess(score~permutate_percent,data=seq_permutate)
+aligned_reads <- read_tsv("./aligned_reads.txt")
+ggplot(aligned_reads) +
+  geom_histogram(aes(x=score,y=stat(count)/sum(count)),bins=50) +
+  geom_vline(xintercept=predict(model,0.4),linetype="dashed",color="red",size=2) +
+  xlab("alignment score") +
+  ylab("frequency") +
+  theme_classic()
+```
+
+### Identify mutations from the aligned reads
+```{r mutations}
+# group the identical sequence together for faster runtime
+aligned_reads <- group_by(aligned_reads,target_seq,target_ref) %>%
+  summarise(count=n(),score=max(score)) %>%
+  ungroup
+abundance_cutoff <- 0
+alignment_score_cutoff <- 0
+mutation <- seq_to_character(aligned_reads,abundance_cutoff=abundance_cutoff,
+                      use_CPM=FALSE,alignment_score_cutoff=alignment_score_cutoff)
+```
+
+### Visualize mutation results
+```{r mutation_v1}
+mutation_type_donut(mutation)
+```
+
+```{r mutation_v2}
+plot_deletion_hotspot(mutation,ref)
+```
+
+```{r mutation_v3}
+plot_insertion_hotspot(mutation,ref)
+```
+
+```{r mutation_v4}
+plot_point_substitution_hotspot(mutation,ref)
+```
+
+### write formatted output file
+```{r output}
+out_df <- format_mutation_df(mutation,is_singlecell=FALSE)
+head(arrange(out_df,desc(count)))
+write_tsv(out_df,"./mutations.traceqc.txt")
+```
+
