@@ -9,6 +9,7 @@ score, users can filter the TraceQC alignment result.}
 \usage{
 sequence_permutation(
   ref_file,
+  python_path = "python3",
   match = 2,
   mismatch = -2,
   gapopen = -6,

@@ -8,22 +8,15 @@ Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "ctb", "c
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"))
 Description: Provides a generalized quantify control functions and data processing pipeline across several CRISPR-based lineage tracing platforms that can be directly used in data analysis.
 Depends: R (>= 3.5.0)
-Imports:
-  circlize,
-  tidyr,
-  RColorBrewer,
-  ggplot2,
-  readr,
-  fastqcr,
-  tictoc,
-  magrittr,
-  dplyr,
-  stringr,
-  grid,
-  rmarkdown,
-  tibble,
-  ape
+Imports: circlize, tidyr, RColorBrewer, ggplot2, readr, purrr, fastqcr,
+        tictoc, magrittr, dplyr, stringr, grid, rmarkdown, tibble
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+NeedsCompilation: no
+Packaged: 2021-10-04 00:44:21 UTC; jasper
+Author: Jingyuan Hu [aut, ctb, cph],
+  Hyun-Hwan Jeong [aut, cre, ctb],
+  Rami Al-Ouran [ctb]
+Maintainer: Hyun-Hwan Jeong <hyun-hwan.jeong@bcm.edu>

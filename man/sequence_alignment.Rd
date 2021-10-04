@@ -9,6 +9,7 @@ sequence_alignment(
   ref_file,
   output_file = "aligned_reads.txt",
   match = 2,
+  python_path = "python3",
   mismatch = -2,
   gapopen = -6,
   gapextension = -0.1,

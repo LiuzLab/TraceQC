@@ -11,14 +11,14 @@ knitr::opts_chunk$set(message = FALSE)
 ### Visualize the annotated reference file
 ```{r ref, out.height=400}
 library(TraceQC)
-ref_file <- system.file("extdata/test_data/ref","ref.txt",package="TraceQC")
+ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
 ref <- parse_ref_file(ref_file)
 plot_construct(ref,chr_per_row=50,chr_size=5)
 ```
 
 ### Sequence alignment
 ```{r align}
-input_file <- system.file("extdata/test_data/fastq","example.fastq.gz",package="TraceQC")
+input_file <- system.file("extdata/test_data/raw_sequence","hgRNA_example.fastq.gz",package="TraceQC")
 output_file <- "./aligned_reads.txt"
 sequence_alignment(input_file=input_file,ref_file=ref_file,
                    output_file=output_file)
@@ -73,8 +73,9 @@ plot_point_substitution_hotspot(mutation,ref)
 
 ### write formatted output file
 ```{r output}
+library(knitr)
 out_df <- format_mutation_df(mutation,is_singlecell=FALSE)
-head(arrange(out_df,desc(count)))
+kable(head(arrange(out_df,desc(count))))
 write_tsv(out_df,"./mutations.traceqc.txt")
 ```
 
