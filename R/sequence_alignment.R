@@ -37,6 +37,7 @@ sequence_alignment <- function(input_file,
                                ref_file,
                                output_file="aligned_reads.txt",
                                match=2,
+                               python_path = "python3",
                                mismatch=-2,
                                gapopen=-6,
                                gapextension=-0.1,
@@ -44,8 +45,8 @@ sequence_alignment <- function(input_file,
                                penalize_end_gaps=1,
                                return_df = FALSE) {
   path <- system.file("py", "alignment.py", package="TraceQC")
-  system(sprintf("python3 %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s",
-                 path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension))}
+  system(sprintf("%s %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s",
+                 python_path,path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension))}
 
 #' Function for a sequence alignment between the reference file and sample for 10x data.
 #'
@@ -74,6 +75,7 @@ sequence_alignment <- function(input_file,
 sequence_alignment_for_10x <- function(input_file,
                                        ref_file,
                                        output_file="aligned_reads.txt",
+                                       python_path = "python3",
                                        match=2,
                                        mismatch=-2,
                                        gapopen=-6,
@@ -81,8 +83,8 @@ sequence_alignment_for_10x <- function(input_file,
                                        penalize_end_gaps=1,
                                        ncores = 4) {
   path <- system.file("py", "alignment_for_10x.py", package="TraceQC")
-  system(sprintf("python3 %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
-         path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))}
+  system(sprintf("%s %s --input %s --ncores %s --ref %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
+                 python_path,path,input_file,ncores,ref_file,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))}
 
 #' Function for finding threshold of sequence alignment. The function randomly
 #' permutate certain percentage reference sequence and perform global alignment
@@ -104,20 +106,21 @@ sequence_alignment_for_10x <- function(input_file,
 #' @export
 
 sequence_permutation <- function(ref_file,
-                                        match=2,
-                                        mismatch=-2,
-                                        gapopen=-6,
-                                        gapextension=-0.1,
-                                        penalize_end_gaps=1,
-                                        read_length=0,
-                                        permutate_percent=seq(0,1,length.out=101),
-                                        n=2,
-                                        output_file="alignment_threshold.txt") {
+                                python_path = "python3",
+                                match=2,
+                                mismatch=-2,
+                                gapopen=-6,
+                                gapextension=-0.1,
+                                penalize_end_gaps=1,
+                                read_length=0,
+                                permutate_percent=seq(0,1,length.out=101),
+                                n=2,
+                                output_file="alignment_threshold.txt") {
   permutate_file <- tempfile()
   write(paste(permutate_percent,collapse=" "), file=permutate_file)
   path <- system.file("py", "sequence_alignment_threshold.py", package="TraceQC")
-  system(sprintf("python3 %s --ref %s --n %s --permutate_percent %s --read_length %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
-                 path,ref_file,n,permutate_file,read_length,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))
+  system(sprintf("%s %s --ref %s --n %s --permutate_percent %s --read_length %s --output %s --match %s --mismatch %s --gapopen %s --gapextension %s --penalize_end_gaps %s",
+                 python_path,path,ref_file,n,permutate_file,read_length,output_file,match,mismatch,gapopen,gapextension,penalize_end_gaps))
   file.remove(permutate_file)}
 
 

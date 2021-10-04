@@ -84,7 +84,7 @@ circular_chordgram <-
     circos.clear()
     lgd <-
       Legend(
-        at = seq(floor(min(df$count)), ceiling(max(df$count)),
+        at = seq(floor(min(df$count)), ceiling(max(df$count))+1,
                  length.out = 5),
         col_fun = col_fun,
         title = "count"
@@ -201,6 +201,7 @@ circular_histogram <- function(df, title, ref) {
 #' plot_deletion_hotspot(example_obj)
 #'
 plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cutoff = 1) {
+  if (!("count" %in% names(mutations))) {mutations$count <- 1}
   deletions <- mutations %>%
     filter(.data$type == "deletion") %>%
     group_by(.data$start, .data$length) %>%
@@ -240,6 +241,7 @@ plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cu
 #'
 plot_insertion_hotspot <-
   function(mutations, ref, use_log_count=TRUE, count_cutoff = 1) {
+    if (!("count" %in% names(mutations))) {mutations$count <- 1}
     insertions <- mutations %>%
       filter(.data$type == "insertion") %>%
       group_by(.data$start, .data$length) %>%
@@ -278,6 +280,7 @@ plot_insertion_hotspot <-
 #' plot_point_mutation_hotspot(example_obj)
 #'
 plot_point_substitution_hotspot <- function(mutations,ref) {
+  if (!("count" %in% names(mutations))) {mutations$count <- 1}
   substitutions <- mutations %>% filter(.data$type == "substitution") %>%
     group_by(.data$start, .data$length, .data$mutate_to) %>%
     summarise(count = sum(.data$count)) %>%

@@ -83,6 +83,10 @@ seq_to_character <- function(aligned_reads,
                              use_CPM,
                              alignment_score_cutoff = 0,
                              abundance_cutoff = 0) {
+  if (!"count" %in% names(aligned_reads)) {
+    aligned_reads$count <- 1
+    abundance_cutoff <- 0}
+  
   if(use_CPM) {
     aligned_reads$count <- aligned_reads$count * 1e6 / sum(aligned_reads$count)
     abundance_cutoff <- 1e6 * abundance_cutoff
@@ -91,7 +95,8 @@ seq_to_character <- function(aligned_reads,
   }
   unmutated <- aligned_reads %>%
     filter(.data$target_seq == .data$target_ref)
-  aligned_reads <- filter(aligned_reads,count>abundance_cutoff)
+  aligned_reads <- filter(aligned_reads,count>abundance_cutoff,
+                          score>alignment_score_cutoff)
 
   all_insertions <- str_locate_all(aligned_reads$target_ref, "-+")
   all_deletions <- str_locate_all(aligned_reads$target_seq, "-+")
@@ -150,21 +155,28 @@ seq_to_character <- function(aligned_reads,
 #'
 format_mutation_df <- function(mutation_df, is_singlecell) {
   if (is_singlecell) {
-    out_df <- mutate(mutation_df,cigar=paste(type,start,length,mutate_to,sep="_")) %>%
-      group_by(CB) %>%
+    out_df <- mutate(mutation_df,alt=case_when(mutate_to=="-" ~ "",
+                                   TRUE ~ mutate_to)) %>%
+      # filter(type!="unmutated") %>%
+      group_by(type,start,length,alt) %>%
       nest() %>%
-      mutate(mutation=map_chr(data,function(x) {paste(unique(x$cigar),collapse=",")})) %>%
+      mutate(cell=map_chr(data,function(x) {paste(unique(x$CB),collapse=",")})) %>%
+      ungroup %>%
       select(-data) %>%
-      ungroup
+      mutate(character=case_when(type=="deletion"|type=="unmutated" ~ sprintf("%s:S%sL%s",toupper(
+                        substr(type,start=1,stop=1)),start,length),
+                                 TRUE ~ sprintf("%s:S%sL%s->%s",toupper(
+                                   substr(type,start=1,stop=1)),start,length,alt)))
   } else {
-    out_df <- mutate(mutation_df,cigar=paste(type,start,length,mutate_to,sep="_")) %>%
-      group_by(target_seq) %>%
-      nest() %>%
-      mutate(mutation=map_chr(data,function(x) {paste(x$cigar,collapse=",")})) %>%
-      mutate(count=map_dbl(data,function(x) {mean(x$count)})) %>%
-      select(-data) %>%
-      ungroup
-  }
-  return(out_df)
+    out_df <- mutate(mutation_df,alt=case_when(mutate_to=="-" ~ "",
+                                               TRUE ~ mutate_to)) %>%
+      group_by(type,start,length,alt) %>%
+      summarise(count=sum(count)) %>%
+      ungroup %>%
+      mutate(character=case_when(type=="deletion"|type=="unmutated" ~ sprintf("%s:S%sL%s",toupper(
+        substr(type,start=1,stop=1)),start,length),
+        TRUE ~ sprintf("%s:S%sL%s->%s",toupper(
+          substr(type,start=1,stop=1)),start,length,alt)))}
+  return(relocate(out_df,character,type,start,length,alt))
 }
 
