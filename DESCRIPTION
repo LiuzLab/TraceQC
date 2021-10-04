@@ -19,3 +19,9 @@ Author: Jingyuan Hu [aut, ctb, cph],
   Hyun-Hwan Jeong [aut, cre, ctb],
   Rami Al-Ouran [ctb]
 Maintainer: Jingyuan Hu <jingyuan.hu@bcm.edu>
+VignetteBuilder: knitr
+Suggests: 
+    knitr,
+    cowplot,
+    testthat
+RoxygenNote: 7.1.1

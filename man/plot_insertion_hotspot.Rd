@@ -11,6 +11,8 @@ plot_insertion_hotspot(mutations, ref, use_log_count = TRUE, count_cutoff = 1)
 
 \item{ref}{A reference object.}
 
+\item{use_log_count}{Color links use log(count + 1).}
+
 \item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
 }
 \value{

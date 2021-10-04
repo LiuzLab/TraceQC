@@ -24,6 +24,8 @@ sequence_permutation(
 \arguments{
 \item{ref_file}{A path of a reference sequence file.}
 
+\item{python_path}{The path to Python interpreter.}
+
 \item{match}{The score for a correct basepair matching.}
 
 \item{mismatch}{The penalty score for a basepair mismatching.}
@@ -32,12 +34,17 @@ sequence_permutation(
 
 \item{gapextension}{The gap extension score for the alignment.}
 
+\item{penalize_end_gaps}{If penalizing the end gap when performing alignment (0 or 1).}
+
+\item{read_length}{The read length of each sequence. Use 0
+if each read convers entire reference sequence.}
+
+\item{permutate_percent}{The percentage of sequence to permutate.}
+
 \item{n}{number of random permutation used for each percentage}
 
 \item{output_file}{The output path. An output dataframe will be
 stored at the path.}
-
-\item{corrupted}{percentage The number of cores for the parallel processing}
 }
 \value{
 It returns a data frame of the alignment result

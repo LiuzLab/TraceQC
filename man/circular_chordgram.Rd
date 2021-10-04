@@ -11,9 +11,11 @@ circular_chordgram(df, title, ref, use_log_count = TRUE, count_cutoff = 1)
 
 \item{title}{The main title of the plot}
 
-\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
+\item{ref}{A reference object.}
 
-\item{traceQC_input}{A TraceQC object}
+\item{use_log_count}{Color links use log(count + 1).}
+
+\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
 }
 \value{
 It doesn't generate any specific output.

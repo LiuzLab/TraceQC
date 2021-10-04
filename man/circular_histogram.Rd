@@ -11,7 +11,7 @@ circular_histogram(df, title, ref)
 
 \item{title}{The main title of the plot.}
 
-\item{ref}{A traceQC object}
+\item{ref}{A reference object}
 }
 \value{
 It doesn't generate any specific output.

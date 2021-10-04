@@ -8,8 +8,8 @@ sequence_alignment(
   input_file,
   ref_file,
   output_file = "aligned_reads.txt",
-  match = 2,
   python_path = "python3",
+  match = 2,
   mismatch = -2,
   gapopen = -6,
   gapextension = -0.1,
@@ -26,6 +26,8 @@ sequence_alignment(
 \item{output_file}{The output path. An output of the alignment will be
 stored at the path.}
 
+\item{python_path}{The path to Python interpreter.}
+
 \item{match}{The score for a correct basepair matching.}
 
 \item{mismatch}{The penalty score for a basepair mismatching.}
@@ -36,8 +38,7 @@ stored at the path.}
 
 \item{ncores}{The number of cores for the parallel processing}
 
-\item{return_df}{A logical argument to report what type of output will
-be created from the function.}
+\item{penalize_end_gaps}{If penalizing the end gap when performing alignment (0 or 1).}
 }
 \value{
 It returns a data frame of the alignment result
@@ -51,13 +52,13 @@ a global pairwise sequence alignment by biopython package.
 \dontrun{
 library(TraceQC)
 input_file <- system.file("extdata", "test_data",
-                          "fastq", "example_small.fastq.gz", package="TraceQC")
+                          "raw_sequences", "hgRNA_example.fastq.gz", package="TraceQC")
 ref_file <- system.file("extdata", "test_data", "ref",
-                        "ref.txt", package="TraceQC")
+                        "ref_hgRNA_invitro.txt", package="TraceQC")
 output_file <- tempfile()
 sequence_alignment(input_file=input_file,
                    ref_file=ref_file,
-                   output_file=output_file,
-                   return_df=TRUE)
+                   output_file=output_file)
+aligned_reads <- read_tsv(output_file)
 }
 }

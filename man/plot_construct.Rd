@@ -8,6 +8,10 @@ plot_construct(ref, chr_per_row = 50, chr_size = 10)
 }
 \arguments{
 \item{ref}{an reference object, output of `parse_ref_file`}
+
+\item{chr_per_row}{number of characters per row.}
+
+\item{chr_size}{the text size of character.}
 }
 \value{
 it returns A ggplot2 object that shows the construct information.

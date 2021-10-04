@@ -25,6 +25,8 @@ sequence_alignment_for_10x(
 \item{output_file}{The output path. An output of the alignment will be
 stored at the path.}
 
+\item{python_path}{The path to Python interpreter.}
+
 \item{match}{The score for a correct basepair matching.}
 
 \item{mismatch}{The penalty score for a basepair mismatching.}
@@ -33,10 +35,9 @@ stored at the path.}
 
 \item{gapextension}{The gap extension score for the alignment.}
 
-\item{ncores}{The number of cores for the parallel processing}
+\item{penalize_end_gaps}{If penalizing the end gap when performing alignment (0 or 1).}
 
-\item{return_df}{A logical argument to report what type of output will
-be created from the function.}
+\item{ncores}{The number of cores for the parallel processing}
 }
 \value{
 It returns a data frame of the alignment result
