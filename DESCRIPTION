@@ -2,14 +2,13 @@ Package: TraceQC
 Type: Package
 Title: Quality Control of CRISPR Lineage Tracing Seqence Data
 Version: 1.0.1
-Date: 2020-06-18
+Date: 2021-10-3
 Authors@R: c(person(given = "Jingyuan", family = "Hu", role = c("aut", "ctb", "cph"), email = "jingyuan.hu@bcm.edu"),
   person(given = "Hyun-Hwan", family = "Jeong", role = c("aut", "cre", "ctb"), email = "hyun-hwan.jeong@bcm.edu"),
   person(given = "Rami", family = "Al-Ouran", role = c("ctb"), email = "rami.al-ouran@bcm.edu"))
 Description: Provides a generalized quantify control functions and data processing pipeline across several CRISPR-based lineage tracing platforms that can be directly used in data analysis.
 Depends: R (>= 3.5.0)
-Imports: circlize, tidyr, RColorBrewer, ggplot2, readr, purrr, fastqcr,
-        tictoc, magrittr, dplyr, stringr, grid, rmarkdown, tibble
+Imports: circlize, tidyr, RColorBrewer, ggplot2, readr, purrr, tictoc, magrittr, dplyr, stringr, grid, rmarkdown, tibble, ComplexHeatmap
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -19,4 +18,4 @@ Packaged: 2021-10-04 00:44:21 UTC; jasper
 Author: Jingyuan Hu [aut, ctb, cph],
   Hyun-Hwan Jeong [aut, cre, ctb],
   Rami Al-Ouran [ctb]
-Maintainer: Hyun-Hwan Jeong <hyun-hwan.jeong@bcm.edu>
+Maintainer: Jingyuan Hu <jingyuan.hu@bcm.edu>
