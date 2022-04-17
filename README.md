@@ -10,7 +10,7 @@ devtools::install_github("LiuzLab/TraceQC")
 ```
 To install the Python packages for traceQC, run:
 ```
-pip install biopython pandas tqdm
+pip install biopython pandas tqdm pysam
 ```
 
 ## Tutorial
