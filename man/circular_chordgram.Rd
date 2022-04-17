@@ -7,15 +7,15 @@
 circular_chordgram(df, title, ref, use_log_count = TRUE, count_cutoff = 1)
 }
 \arguments{
-\item{df}{a data frame that contains data to be visualized on the plot}
+\item{df}{A data frame that contains data to be visualized on the plot}
 
 \item{title}{The main title of the plot}
 
-\item{ref}{A reference object.}
+\item{ref}{An reference object, output of `parse_ref_file`}
 
-\item{use_log_count}{Color links use log(count + 1).}
+\item{use_log_count}{Plot the circular plot useing log()}
 
-\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
+\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value (default: 1).}
 }
 \value{
 It doesn't generate any specific output.

@@ -16,7 +16,7 @@ A ggplot2 object that shows the barplot
 A barplot to show distribution of the number of mutations per barcode
 }
 \examples{
-data(example_obj)
-num_mutation_histogram(example_obj)
+mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+num_mutation_histogram(mutation)
 
 }

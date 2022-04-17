@@ -22,36 +22,33 @@ sequence_permutation(
 )
 }
 \arguments{
-\item{ref_file}{A path of a reference sequence file.}
+\item{ref_file}{A path of a reference sequence file (required).}
 
-\item{python_path}{The path to Python interpreter.}
+\item{python_path}{The path to Python. (default: "python3").}
 
-\item{match}{The score for a correct basepair matching.}
+\item{match}{The score for a correct basepair matching (default: 2).}
 
-\item{mismatch}{The penalty score for a basepair mismatching.}
+\item{mismatch}{The penalty score for a basepair mismatching (default: -2).}
 
-\item{gapopen}{The gap opening score for the alignment.}
+\item{gapopen}{The gap opening score for the alignment (default: -6).}
 
-\item{gapextension}{The gap extension score for the alignment.}
+\item{gapextension}{The gap extension score for the alignment (default: -0.1).}
 
-\item{penalize_end_gaps}{If penalizing the end gap when performing alignment (0 or 1).}
+\item{penalize_end_gaps}{Whether penalize the end gap, the value should take 0/1 (default: 1).}
 
-\item{read_length}{The read length of each sequence. Use 0
-if each read convers entire reference sequence.}
-
-\item{permutate_percent}{The percentage of sequence to permutate.}
-
-\item{n}{number of random permutation used for each percentage}
-
-\item{output_file}{The output path. An output dataframe will be
-stored at the path.}
+\item{output_file}{The output path. An output of the alignment will be
+stored at the path (default: "alignment_threshold.txt").}
 }
 \value{
-It returns a data frame of the alignment result
+It returns a data frame of the alignment result with randomly permutated sequence.
 }
 \description{
 Function for finding threshold of sequence alignment. The function randomly
 permutate certain percentage reference sequence and perform global alignment
 with the original reference sequence. By use the permutated sequence alignment
 score, users can filter the TraceQC alignment result.
+}
+\examples{
+ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+sequence_permutation(ref_file,out="./seq_permutate.txt")
 }

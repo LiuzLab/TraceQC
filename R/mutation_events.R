@@ -78,6 +78,13 @@ find_position <-
 #'   \item `count': The total number of the mutation events from the sample.
 #' }
 #' @export
+#' @examples
+#' unique_sequences <- group_by(aligned_reads,target_seq,target_ref) %>%
+#' summarise(score=max(score)) %>%
+#'   ungroup
+#' alignment_score_cutoff <- predict(model,0.4)
+#' mutation <- seq_to_character(unique_sequences,use_CPM=FALSE,
+#'                              alignment_score_cutoff=alignment_score_cutoff)
 #'
 seq_to_character <- function(aligned_reads,
                              use_CPM,
@@ -143,15 +150,18 @@ seq_to_character <- function(aligned_reads,
 }
 
 
-#' format a mutation data frame for output.
+#' Format a mutation data frame for output.
 #' 
 #' @param mutations A data frame of mutations. The output of seq_to_character.
+#' @param is_singlecell If the dataframe is is single-cell.
 #' 
 #' @importFrom tidyr nest
 #' @importFrom purrr map_chr
 #' @importFrom purrr map_dbl
 #' @return A formatted data frame of mutations.
 #' @export
+#' @examples 
+#' out_df <- format_mutation_df(mutation,is_singlecell=FALSE)
 #'
 format_mutation_df <- function(mutation_df, is_singlecell) {
   if (is_singlecell) {

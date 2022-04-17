@@ -2,16 +2,22 @@
 % Please edit documentation in R/mutation_events.R
 \name{format_mutation_df}
 \alias{format_mutation_df}
-\title{format a mutation data frame for output.}
+\title{Format a mutation data frame for output.}
 \usage{
 format_mutation_df(mutation_df, is_singlecell)
 }
 \arguments{
+\item{is_singlecell}{If the dataframe is is single-cell.}
+
 \item{mutations}{A data frame of mutations. The output of seq_to_character.}
 }
 \value{
 A formatted data frame of mutations.
 }
 \description{
-format a mutation data frame for output.
+Format a mutation data frame for output.
+}
+\examples{
+out_df <- format_mutation_df(mutation,is_singlecell=FALSE)
+
 }

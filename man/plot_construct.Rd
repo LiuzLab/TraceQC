@@ -9,13 +9,20 @@ plot_construct(ref, chr_per_row = 50, chr_size = 10)
 \arguments{
 \item{ref}{an reference object, output of `parse_ref_file`}
 
-\item{chr_per_row}{number of characters per row.}
+\item{chr_per_row}{number of charachters per row.}
 
-\item{chr_size}{the text size of character.}
+\item{chr_size}{the font size of characters.}
 }
 \value{
-it returns A ggplot2 object that shows the construct information.
+it returns A ggplot2 object that shows the construct reference sequence.
 }
 \description{
 Visualization of the construct (reference sequence) information.
+}
+\examples{
+
+ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+plot_construct(ref,chr_per_row=50,chr_size=5)
+
 }

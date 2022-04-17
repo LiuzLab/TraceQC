@@ -12,7 +12,7 @@ Imports: circlize, tidyr, RColorBrewer, ggplot2, readr, purrr, tictoc, magrittr,
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 NeedsCompilation: no
 Packaged: 2021-10-04 00:44:21 UTC; jasper
 Author: Jingyuan Hu [aut, ctb, cph],
@@ -24,4 +24,3 @@ Suggests:
     knitr,
     cowplot,
     testthat
-RoxygenNote: 7.1.1

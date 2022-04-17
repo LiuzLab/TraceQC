@@ -16,7 +16,6 @@ A ggplot2 object that shows Lorenz Curve
 The Lorenz curve shows an inequality of barcode distribution of the sample.
 }
 \examples{
-data(example_obj)
-plot_lorenz_curve(example_obj)
+plot_lorenz_curve(aligned_reads)
 
 }

@@ -7,10 +7,11 @@ library(ggplot2)
 
 #' Display a circos plot with links for a given data frame.
 #'
-#' @param df a data frame that contains data to be visualized on the plot
+#' @param df A data frame that contains data to be visualized on the plot
 #' @param title The main title of the plot
-#' @param traceQC_input A TraceQC object
-#' @param count_cutoff A cutoff to remove link whose log10-count are less than the value.
+#' @param ref An reference object, output of `parse_ref_file`
+#' @param use_log_count Plot the circular plot useing log()
+#' @param count_cutoff A cutoff to remove link whose log10-count are less than the value (default: 1).
 #'
 #' @import circlize
 #' @importFrom magrittr %>%
@@ -186,7 +187,8 @@ circular_histogram <- function(df, title, ref) {
 #'
 #' @param mutations A mutations dataframe.
 #' @param ref A reference object.
-#' @param count_cutoff A cutoff to remove link whose log10-count are less than the value.
+#' @use_log_count Use log(count).
+#' @param count_cutoff A cutoff to remove link whose count (or log10-count) are less than the value (default: 1).
 #'
 #' @importFrom magrittr %>%
 #' @import circlize
@@ -197,8 +199,10 @@ circular_histogram <- function(df, title, ref) {
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' plot_deletion_hotspot(example_obj)
+#' ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+#' plot_deletion_hotspot(mutation,ref)
 #'
 plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cutoff = 1) {
   if (!("count" %in% names(mutations))) {mutations$count <- 1}
@@ -226,7 +230,8 @@ plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cu
 #'
 #' @param mutations A mutations dataframe.
 #' @param ref A reference object.
-#' @param count_cutoff A cutoff to remove link whose log10-count are less than the value.
+#' @use_log_count Use log(count).
+#' @param count_cutoff A cutoff to remove link whose count (or log10-count) are less than the value (default: 1).
 #'
 #' @importFrom magrittr %>%
 #' @import circlize
@@ -236,8 +241,10 @@ plot_deletion_hotspot <- function(mutations, ref, use_log_count = TRUE, count_cu
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' plot_insertion_hotspot(example_obj)
+#' ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+#' plot_insertion_hotspot(mutation,ref)
 #'
 plot_insertion_hotspot <-
   function(mutations, ref, use_log_count=TRUE, count_cutoff = 1) {
@@ -264,8 +271,8 @@ plot_insertion_hotspot <-
 #'
 #' The circos plot shows the frequency of mutation events for each nucleotide.
 #'
-#' @param mutations A mutations dataframe
-#' @param ref A reference object
+#' @param mutations A mutations dataframe.
+#' @param ref A reference object.
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
@@ -276,8 +283,10 @@ plot_insertion_hotspot <-
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' plot_point_mutation_hotspot(example_obj)
+#' ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+#' plot_insertion_hotspot(mutation,ref)
 #'
 plot_point_substitution_hotspot <- function(mutations,ref) {
   if (!("count" %in% names(mutations))) {mutations$count <- 1}

@@ -16,7 +16,6 @@ A ggplot2 object that shows alignment score distribution.
 Drawing a score distribution plot
 }
 \examples{
-data(example_obj)
-plot_score_distribution(example_obj)
+plot_score_distribution(aligned_reads)
 
 }

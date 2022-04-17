@@ -7,9 +7,9 @@
 plot_point_substitution_hotspot(mutations, ref)
 }
 \arguments{
-\item{mutations}{A mutations dataframe}
+\item{mutations}{A mutations dataframe.}
 
-\item{ref}{A reference object}
+\item{ref}{A reference object.}
 }
 \value{
 It won't return any specific object.
@@ -18,7 +18,9 @@ It won't return any specific object.
 The circos plot shows the frequency of mutation events for each nucleotide.
 }
 \examples{
-data(example_obj)
-plot_point_mutation_hotspot(example_obj)
+ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+plot_insertion_hotspot(mutation,ref)
 
 }

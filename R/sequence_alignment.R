@@ -3,17 +3,19 @@
 #' The function is an wrapper of a python function which performs
 #' a global pairwise sequence alignment by biopython package.
 #'
-#' @param input_file A FASTQ file path
-#' @param ref_file A path of a reference sequence file.
+#' @param input_file A FASTQ file path (required).
+#' @param ref_file A path of a reference sequence file (required).
 #' @param output_file The output path. An output of the alignment will be
-#' stored at the path.
-#' @param match The score for a correct basepair matching.
-#' @param mismatch The penalty score for a basepair mismatching.
-#' @param gapopen The gap opening score for the alignment.
-#' @param gapextension The gap extension score for the alignment.
+#' stored at the path (default: "aligned_reads.txt").
+#' @param python_path The path to Python. (default: "python3").
+#' @param match The score for a correct basepair matching (default: 2).
+#' @param mismatch The penalty score for a basepair mismatching (default: -2).
+#' @param gapopen The gap opening score for the alignment (default: -6).
+#' @param gapextension The gap extension score for the alignment (default: -0.1).
+#' @param ncores The number of cores for the parallel processing.
+#' @param penalize_end_gaps Whether penalize the end gap, the value should take 0/1 (default: 1).
 #' @param return_df A logical argument to report what type of output will
 #' be created from the function.
-#' @param ncores The number of cores for the parallel processing
 #'
 #' @importFrom readr read_tsv
 #' @return It returns a data frame of the alignment result
@@ -21,23 +23,18 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(TraceQC)
-#' input_file <- system.file("extdata", "test_data",
-#'                           "fastq", "example_small.fastq.gz", package="TraceQC")
-#' ref_file <- system.file("extdata", "test_data", "ref",
-#'                         "ref.txt", package="TraceQC")
-#' output_file <- tempfile()
-#' sequence_alignment(input_file=input_file,
-#'                    ref_file=ref_file,
-#'                    output_file=output_file,
-#'                    return_df=TRUE)
-#' }
+#' ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' input_file <- system.file("extdata/test_data/raw_sequence","hgRNA_example.fastq.gz",package="TraceQC")
+#' output_file <- "./aligned_reads.txt"
+#' sequence_alignment(input_file=input_file,ref_file=ref_file,
+#'                    output_file=output_file)
+#' 
 sequence_alignment <- function(input_file,
                                ref_file,
                                output_file="aligned_reads.txt",
-                               match=2,
                                python_path = "python3",
+                               match=2,
                                mismatch=-2,
                                gapopen=-6,
                                gapextension=-0.1,
@@ -53,17 +50,17 @@ sequence_alignment <- function(input_file,
 #' The function is an wrapper of a python function which performs
 #' a global pairwise sequence alignment by biopython package.
 #'
-#' @param input_file  A file path of possorted_genome_bam.bam out put by cellranger
-#' @param ref_file A path of a reference sequence file.
+#' @param input_file A FASTQ file path (required).
+#' @param ref_file A path of a reference sequence file (required).
 #' @param output_file The output path. An output of the alignment will be
-#' stored at the path.
-#' @param match The score for a correct basepair matching.
-#' @param mismatch The penalty score for a basepair mismatching.
-#' @param gapopen The gap opening score for the alignment.
-#' @param gapextension The gap extension score for the alignment.
-#' @param return_df A logical argument to report what type of output will
-#' be created from the function.
-#' @param ncores The number of cores for the parallel processing
+#' stored at the path (default: "aligned_reads.txt").
+#' @param python_path The path to Python. (default: "python3").
+#' @param match The score for a correct basepair matching (default: 2).
+#' @param mismatch The penalty score for a basepair mismatching (default: -2).
+#' @param gapopen The gap opening score for the alignment (default: -6).
+#' @param gapextension The gap extension score for the alignment (default: -0.1).
+#' @param ncores The number of cores for the parallel processing.
+#' @param penalize_end_gaps Whether penalize the end gap, the value should take 0/1 (default: 1).
 #'
 #' @importFrom readr read_tsv
 #' @return It returns a data frame of the alignment result
@@ -71,6 +68,10 @@ sequence_alignment <- function(input_file,
 #' @export
 #'
 #' @examples
+#' input_file <- system.file("extdata/test_data/raw_sequence","carlin_example.bam",package="TraceQC")
+#' output_file <- "./aligned_reads.txt"
+#' sequence_alignment_for_10x(input_file=input_file,ref_file=ref_file,
+#'                            output_file=output_file)
 
 sequence_alignment_for_10x <- function(input_file,
                                        ref_file,
@@ -91,19 +92,22 @@ sequence_alignment_for_10x <- function(input_file,
 #' with the original reference sequence. By use the permutated sequence alignment
 #' score, users can filter the TraceQC alignment result.
 #'
-#' @param ref_file A path of a reference sequence file.
-#' @param output_file The output path. An output dataframe will be
-#' stored at the path.
-#' @param match The score for a correct basepair matching.
-#' @param mismatch The penalty score for a basepair mismatching.
-#' @param gapopen The gap opening score for the alignment.
-#' @param gapextension The gap extension score for the alignment.
-#' @param n number of random permutation used for each percentage
-#' @param corrupted percentage The number of cores for the parallel processing
+#' @param ref_file A path of a reference sequence file (required).
+#' @param output_file The output path. An output of the alignment will be
+#' stored at the path (default: "alignment_threshold.txt").
+#' @param python_path The path to Python. (default: "python3").
+#' @param match The score for a correct basepair matching (default: 2).
+#' @param mismatch The penalty score for a basepair mismatching (default: -2).
+#' @param gapopen The gap opening score for the alignment (default: -6).
+#' @param gapextension The gap extension score for the alignment (default: -0.1).
+#' @param penalize_end_gaps Whether penalize the end gap, the value should take 0/1 (default: 1).
 #'
 #' @importFrom readr read_tsv
-#' @return It returns a data frame of the alignment result
+#' @return It returns a data frame of the alignment result with randomly permutated sequence.
 #' @export
+#' @examples
+#' ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+#' sequence_permutation(ref_file,out="./seq_permutate.txt")
 
 sequence_permutation <- function(ref_file,
                                 python_path = "python3",
@@ -132,7 +136,10 @@ sequence_permutation <- function(ref_file,
 #'   \item `regions': Detailed information about the reference sequence.
 #' }
 #' @export
-#'
+#' @examples
+#' ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' 
 parse_ref_file <- function(ref_file) {
   ref <- readLines(ref_file)
   refseq <- ref[1]

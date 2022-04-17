@@ -1,12 +1,19 @@
 #' Visualization of the construct (reference sequence) information.
 #'
 #' @param ref an reference object, output of `parse_ref_file`
+#' @param chr_per_row number of charachters per row.
+#' @param chr_size the font size of characters.
 #'
 #' @importFrom RColorBrewer brewer.pal
 #' @import ggplot2
 #'
-#' @return it returns A ggplot2 object that shows the construct information.
+#' @return it returns A ggplot2 object that shows the construct reference sequence.
 #' @export
+#' @examples 
+#' 
+#' ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+#' ref <- parse_ref_file(ref_file)
+#' plot_construct(ref,chr_per_row=50,chr_size=5)
 #'
 plot_construct <- function(ref,chr_per_row=50,chr_size=10) {
   colors <- brewer.pal(length(unique(ref$regions$region)) + 1, "Set2")
@@ -65,8 +72,7 @@ plot_alignment_permutation <-  function(alignment_permutation) {
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' plot_score_distribution(example_obj)
+#' plot_score_distribution(aligned_reads)
 #'
 plot_score_distribution <- function(aligned_reads) {
   ggplot(aligned_reads) +
@@ -87,8 +93,7 @@ plot_score_distribution <- function(aligned_reads) {
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' plot_lorenz_curve(example_obj)
+#' plot_lorenz_curve(aligned_reads)
 #'
 plot_lorenz_curve <- function(aligned_reads) {
   p <- aligned_reads %>%
@@ -128,8 +133,8 @@ plot_lorenz_curve <- function(aligned_reads) {
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' num_mutation_histogram(example_obj)
+#' mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+#' num_mutation_histogram(mutation)
 #'
 num_mutation_histogram <- function(mutations) {
   p <- mutations %>%
@@ -160,8 +165,8 @@ num_mutation_histogram <- function(mutations) {
 #' @export
 #'
 #' @examples
-#' data(example_obj)
-#' mutation_type(example_obj)
+#' mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+#' mutation_type_donut(mutation)
 #'
 mutation_type_donut <- function(mutations) {
   plotting_df <- mutations %>%

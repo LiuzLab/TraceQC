@@ -16,7 +16,7 @@ A ggplot2 object that shows the pie chart
 A pie chart that shows a summary of mutation types.
 }
 \examples{
-data(example_obj)
-mutation_type(example_obj)
+mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+mutation_type_donut(mutation)
 
 }

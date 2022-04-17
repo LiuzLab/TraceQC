@@ -19,3 +19,8 @@ A list with those four elements.
 \description{
 Parsing reference sequence file
 }
+\examples{
+ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+
+}

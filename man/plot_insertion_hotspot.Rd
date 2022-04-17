@@ -11,9 +11,7 @@ plot_insertion_hotspot(mutations, ref, use_log_count = TRUE, count_cutoff = 1)
 
 \item{ref}{A reference object.}
 
-\item{use_log_count}{Color links use log(count + 1).}
-
-\item{count_cutoff}{A cutoff to remove link whose log10-count are less than the value.}
+\item{count_cutoff}{A cutoff to remove link whose count (or log10-count) are less than the value (default: 1).}
 }
 \value{
 It won't return any specific object.
@@ -22,7 +20,9 @@ It won't return any specific object.
 Display a circos plot that shows overall insertion pattern across the barcodes.
 }
 \examples{
-data(example_obj)
-plot_insertion_hotspot(example_obj)
+ref_file <- system.file("extdata/test_data/ref","ref_hgRNA_invitro.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+mutation <- read_tsv(system.file("extdata/test_data","mutation.txt",package="TraceQC"))
+plot_insertion_hotspot(mutation,ref)
 
 }

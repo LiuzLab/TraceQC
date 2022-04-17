@@ -33,3 +33,12 @@ A data frame that contains the columns:
 \description{
 Identifying mutation events.
 }
+\examples{
+unique_sequences <- group_by(aligned_reads,target_seq,target_ref) \%>\%
+summarise(score=max(score)) \%>\%
+  ungroup
+alignment_score_cutoff <- predict(model,0.4)
+mutation <- seq_to_character(unique_sequences,use_CPM=FALSE,
+                             alignment_score_cutoff=alignment_score_cutoff)
+
+}

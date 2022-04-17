@@ -19,26 +19,29 @@ sequence_alignment(
 )
 }
 \arguments{
-\item{input_file}{A FASTQ file path}
+\item{input_file}{A FASTQ file path (required).}
 
-\item{ref_file}{A path of a reference sequence file.}
+\item{ref_file}{A path of a reference sequence file (required).}
 
 \item{output_file}{The output path. An output of the alignment will be
-stored at the path.}
+stored at the path (default: "aligned_reads.txt").}
 
-\item{python_path}{The path to Python interpreter.}
+\item{python_path}{The path to Python. (default: "python3").}
 
-\item{match}{The score for a correct basepair matching.}
+\item{match}{The score for a correct basepair matching (default: 2).}
 
-\item{mismatch}{The penalty score for a basepair mismatching.}
+\item{mismatch}{The penalty score for a basepair mismatching (default: -2).}
 
-\item{gapopen}{The gap opening score for the alignment.}
+\item{gapopen}{The gap opening score for the alignment (default: -6).}
 
-\item{gapextension}{The gap extension score for the alignment.}
+\item{gapextension}{The gap extension score for the alignment (default: -0.1).}
 
-\item{ncores}{The number of cores for the parallel processing}
+\item{ncores}{The number of cores for the parallel processing.}
 
-\item{penalize_end_gaps}{If penalizing the end gap when performing alignment (0 or 1).}
+\item{penalize_end_gaps}{Whether penalize the end gap, the value should take 0/1 (default: 1).}
+
+\item{return_df}{A logical argument to report what type of output will
+be created from the function.}
 }
 \value{
 It returns a data frame of the alignment result
@@ -49,16 +52,11 @@ The function is an wrapper of a python function which performs
 a global pairwise sequence alignment by biopython package.
 }
 \examples{
-\dontrun{
-library(TraceQC)
-input_file <- system.file("extdata", "test_data",
-                          "raw_sequences", "hgRNA_example.fastq.gz", package="TraceQC")
-ref_file <- system.file("extdata", "test_data", "ref",
-                        "ref_hgRNA_invitro.txt", package="TraceQC")
-output_file <- tempfile()
-sequence_alignment(input_file=input_file,
-                   ref_file=ref_file,
+ref_file <- system.file("extdata/test_data/ref","ref_carlin.txt",package="TraceQC")
+ref <- parse_ref_file(ref_file)
+input_file <- system.file("extdata/test_data/raw_sequence","hgRNA_example.fastq.gz",package="TraceQC")
+output_file <- "./aligned_reads.txt"
+sequence_alignment(input_file=input_file,ref_file=ref_file,
                    output_file=output_file)
-aligned_reads <- read_tsv(output_file)
-}
+
 }

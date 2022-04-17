@@ -7,7 +7,7 @@
 plot_alignment_permutation(alignment_permutation)
 }
 \arguments{
-\item{alignment_permutation}{an data frame of permutation sequence, output of `sequence_permutation`}
+\item{ref}{an data frame of permutation sequence, output of `sequence_permutation`}
 }
 \value{
 it returns A ggplot2 object that shows the permutation.
